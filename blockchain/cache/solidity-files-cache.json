@@ -1,0 +1,113 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "C:\\Users\\265660\\Desktop\\fyp\\Medical-Record-With-Blockchain\\blockchain\\contracts\\auditcontract.sol": {
+      "lastModificationDate": 1764164163796,
+      "contentHash": "90812b0431e046e3671c7482ec0c2c65",
+      "sourceName": "contracts/auditcontract.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "HealthcareAudit"
+      ]
+    },
+    "C:\\Users\\265660\\Desktop\\fyp\\Medical-Record-With-Blockchain\\blockchain\\contracts\\doctorcontract.sol": {
+      "lastModificationDate": 1764164163827,
+      "contentHash": "6bd4bc46609d2cc57b41d3b4f05ebf5b",
+      "sourceName": "contracts/doctorcontract.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "DoctorManagement"
+      ]
+    },
+    "C:\\Users\\265660\\Desktop\\fyp\\Medical-Record-With-Blockchain\\blockchain\\contracts\\patientcontract.sol": {
+      "lastModificationDate": 1764164163858,
+      "contentHash": "544de99d4fc28d4ebed58a21b2244ed0",
+      "sourceName": "contracts/patientcontract.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "PatientManagement"
+      ]
+    }
+  }
+}

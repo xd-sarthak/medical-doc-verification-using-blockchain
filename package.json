@@ -1,0 +1,21 @@
+{
+  "name": "medical-record-with-blockchain",
+  "version": "1.0.0",
+  "description": "![](./imgs/img02.png)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/drisskhattabi6/Medical-Record-With-Blockchain.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/drisskhattabi6/Medical-Record-With-Blockchain/issues"
+  },
+  "homepage": "https://github.com/drisskhattabi6/Medical-Record-With-Blockchain#readme"
+}

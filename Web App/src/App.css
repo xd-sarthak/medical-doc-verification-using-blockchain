@@ -1,0 +1,15 @@
+.file-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.file-row:first-child {
+  border-top: 1px solid #eee; 
+}
+
+h1 {
+  font-size: 30px;
+  font-weight: 800;
+}
