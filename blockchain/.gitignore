@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Hardhat build artifacts
+cache/
+artifacts/
+typechain-types/
+
+# Benchmark temporary files
+data/benchmark-checkpoint.json
+compile_err*.txt
+compile_output.txt
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
