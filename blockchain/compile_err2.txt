@@ -1,0 +1,3 @@
+[31m[1mError[22m[39m [31m[1mHH801:[22m[39m Plugin @nomicfoundation/hardhat-ignition-ethers requires the following dependencies to be installed: @nomicfoundation/hardhat-ignition, @nomicfoundation/ignition-core.
+Please run: npm install --save-dev "@nomicfoundation/hardhat-ignition@^0.15.16" "@nomicfoundation/ignition-core@^0.15.15"
+For more info go to https://v2.hardhat.org/HH801 or run Hardhat with --show-stack-traces

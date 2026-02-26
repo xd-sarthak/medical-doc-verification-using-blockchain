@@ -1,0 +1,7 @@
+operation,contract,description,avg_gas,stddev_gas,ci95_lower,ci95_upper,cost_eth,cost_usd,avg_time_ms,stddev_time_ms,gas_price_gwei,eth_price_usd
+registerPatient,PatientManagement,Register a new patient in the system,98223,5,98218,98227,0.00196445,6.8756,3.98,1.68,20,3500
+registerDoctor,DoctorManagement,Register a new doctor in the system,125544,5,125539,125548,0.00251087,8.7881,2.72,0.40,20,3500
+addMedicalRecord,PatientManagement,Store a new medical document hash + metadata on-chain,269168,1250,268073,270263,0.00538336,18.8418,3.17,0.34,20,3500
+grantAccess,DoctorManagement,Grant a doctor access to a patient's records,93419,7,93413,93425,0.00186838,6.5393,2.58,0.43,20,3500
+revokeAccess,DoctorManagement,Revoke a doctor's access to a patient's records,34960,5,34956,34965,0.00069921,2.4472,2.41,0.35,20,3500
+addAuditLog,HealthcareAudit,Log an audit trail entry for compliance tracking,195488,7647,188785,202191,0.00390976,13.6842,2.56,0.45,20,3500
