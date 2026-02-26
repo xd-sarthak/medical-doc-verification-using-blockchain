@@ -151,15 +151,25 @@ Does gas cost increase as the contract stores more documents?
 
 ## Charts
 
-The following charts are generated from the benchmark data and available in `data/charts/`:
+### Gas Cost per Operation
 
-| Chart | File |
-|-------|------|
-| Gas cost per operation (bar chart) | `gas-cost-comparison.png` |
-| IPFS performance vs file size (line chart) | `upload-time-vs-filesize.png` |
-| Concurrent users performance (line chart) | `concurrent-users-performance.png` |
-| Cost comparison: Ethereum vs Polygon vs AWS (grouped bar) | `cost-comparison.png` |
-| Gas price sensitivity (line chart) | `gas-price-sensitivity.png` |
+![Gas Cost Comparison](../data/charts/gas-cost-comparison.png)
+
+### IPFS Upload Time vs File Size
+
+![Upload Time vs File Size](../data/charts/upload-time-vs-filesize.png)
+
+### Gas Price Sensitivity
+
+![Gas Price Sensitivity](../data/charts/gas-price-sensitivity.png)
+
+### Cost Comparison: Ethereum vs Polygon vs AWS
+
+![Cost Comparison](../data/charts/cost-comparison.png)
+
+### Concurrent Users Performance
+
+![Concurrent Users Performance](../data/charts/concurrent-users-performance.png)
 
 ---
 
