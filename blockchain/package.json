@@ -10,7 +10,9 @@
     "analyze": "node scripts/analyze-results.js",
     "generate-graphs": "node scripts/generate-graphs.js",
     "benchmark:full": "npm run benchmark && npm run analyze && npm run generate-graphs",
-    "test": "npx hardhat test"
+    "test": "npx hardhat test",
+    "test:report": "npx hardhat test && node scripts/generate-test-report.js",
+    "test:coverage": "npx hardhat coverage"
   },
   "keywords": [],
   "author": "",
@@ -34,6 +36,9 @@
     "ethers": "^6.16.0",
     "hardhat": "^2.26.2",
     "hardhat-gas-reporter": "^2.3.0",
+    "mochawesome": "^7.1.4",
+    "mochawesome-merge": "^5.1.1",
+    "mochawesome-report-generator": "^6.3.2",
     "solidity-coverage": "^0.8.17",
     "ts-node": "^10.9.2",
     "typechain": "^8.3.2",

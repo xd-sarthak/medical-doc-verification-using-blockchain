@@ -108,6 +108,43 @@
       "artifacts": [
         "PatientManagement"
       ]
+    },
+    "C:\\Users\\265660\\Desktop\\fyp\\Medical-Record-With-Blockchain\\blockchain\\contracts\\test\\ReentrancyAttacker.sol": {
+      "lastModificationDate": 1772193131627,
+      "contentHash": "fcc129a9b54656d4ccf10bb25178fc22",
+      "sourceName": "contracts/test/ReentrancyAttacker.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IDoctorManagement",
+        "ReentrancyAttacker"
+      ]
     }
   }
 }

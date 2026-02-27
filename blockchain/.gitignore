@@ -11,6 +11,10 @@ data/benchmark-checkpoint.json
 compile_err*.txt
 compile_output.txt
 
+# Test reports
+mochawesome-report/
+coverage/
+
 # Environment
 .env
 .env.local
