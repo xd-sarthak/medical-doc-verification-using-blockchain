@@ -1,7 +1,7 @@
 operation,contract,description,avg_gas,stddev_gas,ci95_lower,ci95_upper,cost_eth,cost_usd,avg_time_ms,stddev_time_ms,gas_price_gwei,eth_price_usd
-registerPatient,PatientManagement,Register a new patient in the system,98223,5,98218,98227,0.00196445,3.9947,3.73,1.71,20,2033.5
-registerDoctor,DoctorManagement,Register a new doctor in the system,125544,5,125539,125548,0.00251087,5.1059,2.41,0.60,20,2033.5
-addMedicalRecord,PatientManagement,Store a new medical document hash + metadata on-chain,269173,1252,268075,270271,0.00538346,10.9473,3.64,0.63,20,2033.5
-grantAccess,DoctorManagement,Grant a doctor access to a patient's records,93419,7,93413,93425,0.00186838,3.7994,2.29,0.57,20,2033.5
-revokeAccess,DoctorManagement,Revoke a doctor's access to a patient's records,34960,5,34956,34965,0.00069921,1.4218,2.09,0.35,20,2033.5
-addAuditLog,HealthcareAudit,Log an audit trail entry for compliance tracking,195488,7647,188785,202191,0.00390976,7.9505,2.44,0.48,20,2033.5
+registerPatient,PatientManagement,Register a new patient in the system,98223,5,98218,98227,0.00196445,3.9621,7.01,6.55,20,2016.91
+registerDoctor,DoctorManagement,Register a new doctor in the system,125544,5,125539,125548,0.00251087,5.0642,2.93,0.50,20,2016.91
+addMedicalRecord,PatientManagement,Store a new medical document hash + metadata on-chain,269171,1258,268068,270273,0.00538341,10.8579,4.55,1.65,20,2016.91
+grantAccess,DoctorManagement,Grant a doctor access to a patient's records,93419,7,93413,93425,0.00186838,3.7684,3.18,1.55,20,2016.91
+revokeAccess,DoctorManagement,Revoke a doctor's access to a patient's records,34960,5,34956,34965,0.00069921,1.4102,3.67,1.40,20,2016.91
+addAuditLog,HealthcareAudit,Log an audit trail entry for compliance tracking,195488,7647,188785,202191,0.00390976,7.8856,4.76,2.58,20,2016.91

@@ -9,7 +9,8 @@
     "benchmark": "npx hardhat run scripts/benchmark.js --network hardhat",
     "analyze": "node scripts/analyze-results.js",
     "generate-graphs": "node scripts/generate-graphs.js",
-    "benchmark:full": "npm run benchmark && npm run analyze && npm run generate-graphs",
+    "benchmark:report": "node scripts/generate-benchmark-report.js",
+    "benchmark:full": "npm run benchmark && npm run analyze && npm run generate-graphs && npm run benchmark:report",
     "test": "npx hardhat test",
     "test:report": "npx hardhat test && node scripts/generate-test-report.js",
     "test:coverage": "npx hardhat coverage"

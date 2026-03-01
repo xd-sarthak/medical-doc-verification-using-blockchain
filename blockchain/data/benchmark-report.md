@@ -1,9 +1,9 @@
 # Benchmark Results Report
 
-> **Generated**: 2026-02-26T22:38:47.914Z
+> **Generated**: 2026-03-01T14:20:31.329Z
 > **Network**: hardhat-local
 > **Solidity Version**: 0.8.20
-> **ETH Price**: $2,033.5 (live)
+> **ETH Price**: $2,016.91 (live)
 > **Gas Price Baseline**: 20 gwei
 > **Iterations per Test**: 5
 
@@ -21,12 +21,12 @@ performance was measured against a local Kubo node running in Docker.
 
 | Operation | Contract | Avg Gas | Std Dev | 95% CI | Cost (USD) | Avg Time |
 |-----------|----------|---------|---------|--------|------------|----------|
-| registerPatient | PatientManagement | 98223 | 5 | [98218, 98227] | $3.9947 | 0.004s |
-| registerDoctor | DoctorManagement | 125544 | 5 | [125539, 125548] | $5.1059 | 0.002s |
-| addMedicalRecord | PatientManagement | 269173 | 1252 | [268075, 270271] | $10.9473 | 0.004s |
-| grantAccess | DoctorManagement | 93419 | 7 | [93413, 93425] | $3.7994 | 0.002s |
-| revokeAccess | DoctorManagement | 34960 | 5 | [34956, 34965] | $1.4218 | 0.002s |
-| addAuditLog | HealthcareAudit | 195488 | 7647 | [188785, 202191] | $7.9505 | 0.002s |
+| registerPatient | PatientManagement | 98223 | 5 | [98218, 98227] | $3.9621 | 0.007s |
+| registerDoctor | DoctorManagement | 125544 | 5 | [125539, 125548] | $5.0642 | 0.003s |
+| addMedicalRecord | PatientManagement | 269171 | 1258 | [268068, 270273] | $10.8579 | 0.005s |
+| grantAccess | DoctorManagement | 93419 | 7 | [93413, 93425] | $3.7684 | 0.003s |
+| revokeAccess | DoctorManagement | 34960 | 5 | [34956, 34965] | $1.4102 | 0.004s |
+| addAuditLog | HealthcareAudit | 195488 | 7647 | [188785, 202191] | $7.8856 | 0.005s |
 
 ### Gas Cost Observations
 
@@ -38,16 +38,16 @@ performance was measured against a local Kubo node running in Docker.
 
 ## 2. Gas Price Sensitivity
 
-USD cost per operation at varying gas prices (ETH = $2,033.5):
+USD cost per operation at varying gas prices (ETH = $2,016.91):
 
 | Operation | 5_gwei | 20_gwei | 50_gwei | 100_gwei | 200_gwei |
 |-----------|------|------|------|------|------|
-| registerPatient | $0.9987 | $3.9947 | $9.9868 | $19.9736 | $39.9471 |
-| registerDoctor | $1.2765 | $5.1059 | $12.7646 | $25.5293 | $51.0586 |
-| addMedicalRecord | $2.7368 | $10.9473 | $27.3682 | $54.7363 | $109.4727 |
-| grantAccess | $0.9498 | $3.7994 | $9.4984 | $18.9968 | $37.9936 |
-| revokeAccess | $0.3555 | $1.4218 | $3.5546 | $7.1092 | $14.2184 |
-| addAuditLog | $1.9876 | $7.9505 | $19.8762 | $39.7525 | $79.5050 |
+| registerPatient | $0.9905 | $3.9621 | $9.9053 | $19.8106 | $39.6212 |
+| registerDoctor | $1.2661 | $5.0642 | $12.6605 | $25.3210 | $50.6420 |
+| addMedicalRecord | $2.7145 | $10.8579 | $27.1446 | $54.2893 | $108.5786 |
+| grantAccess | $0.9421 | $3.7684 | $9.4209 | $18.8418 | $37.6836 |
+| revokeAccess | $0.3526 | $1.4102 | $3.5256 | $7.0512 | $14.1024 |
+| addAuditLog | $1.9714 | $7.8856 | $19.7141 | $39.4282 | $78.8563 |
 
 > **Key Finding**: At peak congestion (200 gwei), costs increase 10× compared to
 > low-activity periods (20 gwei). This highlights the importance of gas price
@@ -59,10 +59,10 @@ USD cost per operation at varying gas prices (ETH = $2,033.5):
 
 | File Size | Upload (avg) | Upload (σ) | Retrieval (avg) | End-to-End (avg) |
 |-----------|-------------|------------|-----------------|------------------|
-| 1KB | 0.028s | 0.014s | 0.003s | 0.033s |
-| 100KB | 0.023s | 0.007s | 0.006s | 0.029s |
-| 1MB | 0.063s | 0.019s | 0.034s | 0.068s |
-| 5MB | 0.118s | 0.024s | 0.100s | 0.124s |
+| 1KB | 0.027s | 0.006s | 0.005s | 0.033s |
+| 100KB | 0.065s | 0.004s | 0.009s | 0.069s |
+| 1MB | 0.052s | 0.015s | 0.015s | 0.057s |
+| 5MB | 0.104s | 0.015s | 0.055s | 0.110s |
 
 ---
 
@@ -74,9 +74,9 @@ Measures whether gas costs increase as the contract accumulates more records.
 
 | Total Documents | Avg Gas | Std Dev | Avg Time |
 |----------------:|--------:|--------:|---------:|
-| 10 | 314287 | 0 | 0.006s |
-| 100 | 314347 | 0 | 0.005s |
-| 500 | 314383 | 0 | 0.004s |
+| 10 | 314287 | 0 | 0.005s |
+| 100 | 314347 | 0 | 0.004s |
+| 500 | 314383 | 0 | 0.005s |
 | 1000 | 314407 | 0 | 0.003s |
 
 ### Concurrent Operations
@@ -89,9 +89,9 @@ Measures application-layer throughput under simultaneous transaction submission.
 
 | Users | Success Rate | Avg Response | Throughput (tx/s) |
 |------:|-------------:|-------------:|------------------:|
-| 10 | 100% | 0.02s | 452.46 |
-| 50 | 100% | 0.08s | 628.45 |
-| 100 | 100% | 0.17s | 559.34 |
+| 10 | 100% | 0.02s | 579.87 |
+| 50 | 100% | 0.09s | 533.3 |
+| 100 | 100% | 0.15s | 620.62 |
 
 ---
 
