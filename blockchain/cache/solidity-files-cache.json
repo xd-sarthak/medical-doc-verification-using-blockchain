@@ -1,9 +1,122 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "C:\\Users\\265660\\Desktop\\fyp\\Medical-Record-With-Blockchain\\blockchain\\contracts\\auditcontract.sol": {
-      "lastModificationDate": 1764164163796,
-      "contentHash": "90812b0431e046e3671c7482ec0c2c65",
+    "/home/sarthak/dev/medical-doc-verification-using-blockchain/blockchain/contracts/ConsentLedger.sol": {
+      "lastModificationDate": 1777036399445,
+      "contentHash": "6a2959202d5cacb701354d1b2bdb655b",
+      "sourceName": "contracts/ConsentLedger.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IdentityRegistry.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ConsentLedger"
+      ]
+    },
+    "/home/sarthak/dev/medical-doc-verification-using-blockchain/blockchain/contracts/IdentityRegistry.sol": {
+      "lastModificationDate": 1777034948926,
+      "contentHash": "b87c239d789a4560f427203a267269fa",
+      "sourceName": "contracts/IdentityRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IdentityRegistry"
+      ]
+    },
+    "/home/sarthak/dev/medical-doc-verification-using-blockchain/blockchain/contracts/RecordRegistry.sol": {
+      "lastModificationDate": 1777036399530,
+      "contentHash": "00f5ab8358cda9a34b43f1c85fcb1e65",
+      "sourceName": "contracts/RecordRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./ConsentLedger.sol",
+        "./IdentityRegistry.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "RecordRegistry"
+      ]
+    },
+    "/home/sarthak/dev/medical-doc-verification-using-blockchain/blockchain/contracts/auditcontract.sol": {
+      "lastModificationDate": 1774540513786,
+      "contentHash": "7d20f4c9338e9677e088e8e0de400f65",
       "sourceName": "contracts/auditcontract.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -37,9 +150,9 @@
         "HealthcareAudit"
       ]
     },
-    "C:\\Users\\265660\\Desktop\\fyp\\Medical-Record-With-Blockchain\\blockchain\\contracts\\doctorcontract.sol": {
-      "lastModificationDate": 1764164163827,
-      "contentHash": "6bd4bc46609d2cc57b41d3b4f05ebf5b",
+    "/home/sarthak/dev/medical-doc-verification-using-blockchain/blockchain/contracts/doctorcontract.sol": {
+      "lastModificationDate": 1774540513786,
+      "contentHash": "df48211facdf9443f6ef2349613b153b",
       "sourceName": "contracts/doctorcontract.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -73,9 +186,9 @@
         "DoctorManagement"
       ]
     },
-    "C:\\Users\\265660\\Desktop\\fyp\\Medical-Record-With-Blockchain\\blockchain\\contracts\\patientcontract.sol": {
-      "lastModificationDate": 1764164163858,
-      "contentHash": "544de99d4fc28d4ebed58a21b2244ed0",
+    "/home/sarthak/dev/medical-doc-verification-using-blockchain/blockchain/contracts/patientcontract.sol": {
+      "lastModificationDate": 1774540513786,
+      "contentHash": "e6ca876219503e249f214a1518cc605d",
       "sourceName": "contracts/patientcontract.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -109,9 +222,9 @@
         "PatientManagement"
       ]
     },
-    "C:\\Users\\265660\\Desktop\\fyp\\Medical-Record-With-Blockchain\\blockchain\\contracts\\test\\ReentrancyAttacker.sol": {
-      "lastModificationDate": 1772193131627,
-      "contentHash": "fcc129a9b54656d4ccf10bb25178fc22",
+    "/home/sarthak/dev/medical-doc-verification-using-blockchain/blockchain/contracts/test/ReentrancyAttacker.sol": {
+      "lastModificationDate": 1774540513786,
+      "contentHash": "095e46e4fb7d0b00f60cdabd86829d4d",
       "sourceName": "contracts/test/ReentrancyAttacker.sol",
       "solcConfig": {
         "version": "0.8.20",

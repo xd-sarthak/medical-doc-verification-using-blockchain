@@ -5,13 +5,15 @@ const ipfs = create({
 });
 
 export async function uploadFileToIPFS(file) {
-    console.log(">>> USING NEW UPLOAD FUNCTION", file);
-
   try {
-    // Browser File -> ReadableStream (best for IPFS)
-    const stream = file.stream();
+    const content =
+      typeof file === "string"
+        ? file
+        : file instanceof Blob
+          ? file
+          : file.stream();
 
-    const result = await ipfs.add(stream, {
+    const result = await ipfs.add(content, {
       pin: true,
       wrapWithDirectory: false,
     });
@@ -25,7 +27,10 @@ export async function uploadFileToIPFS(file) {
   }
 }
 
-export const viewFile = async (cid) => {
-  const url = `http://127.0.0.1:8080/ipfs/${cid}`;
-  window.open(url, "_blank");
-};
+export async function fetchIpfsBlob(cid) {
+  const response = await fetch(`http://127.0.0.1:8080/ipfs/${cid}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch IPFS payload for ${cid}`);
+  }
+  return response.blob();
+}

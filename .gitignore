@@ -1,0 +1,44 @@
+# Dependencies
+node_modules
+.pnp/
+.pnp.js
+
+# Testing
+coverage/
+
+# Build and IDE
+build/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+.codex/
+
+# Environment Variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Hardhat build artifacts
+cache/
+artifacts/
+typechain-types/
+
+# Benchmark temporary files
+data/benchmark-checkpoint.json
+compile_err*.txt
+compile_output.txt
+mochawesome-report/
+
+# Ignored as per request (remove all local files, unnecessary files including .md)
+*.md
+*.html
+*.pdf
+imgs/

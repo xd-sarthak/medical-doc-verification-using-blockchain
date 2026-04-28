@@ -1,0 +1,94 @@
+{
+  "generatedAt": "2026-04-28T20:28:46.649Z",
+  "baselineSource": "/home/sarthak/dev/medical-doc-verification-using-blockchain/blockchain/data/baseline-gas-results.json",
+  "optimizedSource": "/home/sarthak/dev/medical-doc-verification-using-blockchain/blockchain/data/optimized-gas-results.json",
+  "totals": {
+    "matchedOperations": 5,
+    "baselineTotal": 620862.8,
+    "optimizedTotal": 398104.6,
+    "difference": -222758.2,
+    "pctChange": -35.88
+  },
+  "comparisons": [
+    {
+      "category": "Patient Registration",
+      "baselineKey": "registerPatient",
+      "optimizedKey": "registerPatients",
+      "baselineMean": 98222.6,
+      "optimizedMean": 47717.6,
+      "difference": -50505,
+      "pctChange": -51.42,
+      "comparable": true
+    },
+    {
+      "category": "Doctor Registration",
+      "baselineKey": "registerDoctor",
+      "optimizedKey": "registerDoctors",
+      "baselineMean": 125543.6,
+      "optimizedMean": 47717.6,
+      "difference": -77826,
+      "pctChange": -61.99,
+      "comparable": true
+    },
+    {
+      "category": "Access Grant / Consent Grant",
+      "baselineKey": "grantAccess",
+      "optimizedKey": "grantConsent",
+      "baselineMean": 93419.2,
+      "optimizedMean": 84444.6,
+      "difference": -8974.6,
+      "pctChange": -9.61,
+      "comparable": true
+    },
+    {
+      "category": "Access Revoke / Consent Revoke",
+      "baselineKey": "revokeAccess",
+      "optimizedKey": "revokeConsent",
+      "baselineMean": 34960.4,
+      "optimizedMean": 27597.6,
+      "difference": -7362.8,
+      "pctChange": -21.06,
+      "comparable": true
+    },
+    {
+      "category": "Record Creation",
+      "baselineKey": "addMedicalRecord",
+      "optimizedKey": "createRecord",
+      "baselineMean": 268717,
+      "optimizedMean": 190627.2,
+      "difference": -78089.8,
+      "pctChange": -29.06,
+      "comparable": true
+    },
+    {
+      "category": "Record Update",
+      "baselineKey": null,
+      "optimizedKey": "updateRecord",
+      "baselineMean": null,
+      "optimizedMean": 181401,
+      "difference": null,
+      "pctChange": null,
+      "comparable": false
+    },
+    {
+      "category": "Audit Write",
+      "baselineKey": "addAuditLog",
+      "optimizedKey": null,
+      "baselineMean": 150235,
+      "optimizedMean": null,
+      "difference": null,
+      "pctChange": null,
+      "comparable": false
+    },
+    {
+      "category": "Record Revoke",
+      "baselineKey": null,
+      "optimizedKey": "revokeRecord",
+      "baselineMean": null,
+      "optimizedMean": 42448,
+      "difference": null,
+      "pctChange": null,
+      "comparable": false
+    }
+  ]
+}

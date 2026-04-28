@@ -177,7 +177,7 @@ Does gas cost increase as the contract stores more documents?
 
 ```bash
 # Prerequisites
-docker run -d --name ipfs_node -p 5001:5001 -p 8080:8080 ipfs/kubo
+docker run -d --name ipfs_node -p 127.0.0.1:5001:5001 -p 127.0.0.1:8080:8080 ipfs/kubo
 
 # Install dependencies
 cd blockchain && npm install

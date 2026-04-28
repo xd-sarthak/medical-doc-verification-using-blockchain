@@ -1,19 +1,22 @@
 async function main() {
-  const Audit = await ethers.getContractFactory("HealthcareAudit");
-  const Doctor = await ethers.getContractFactory("DoctorManagement");
-  const Patient = await ethers.getContractFactory("PatientManagement");
+  const IdentityRegistry = await ethers.getContractFactory("IdentityRegistry");
+  const ConsentLedger = await ethers.getContractFactory("ConsentLedger");
+  const RecordRegistry = await ethers.getContractFactory("RecordRegistry");
 
-  console.log("Deploying HealthcareAudit...");
-  const audit = await Audit.deploy();
-  console.log("AuditContract:", await audit.getAddress());
+  console.log("Deploying IdentityRegistry...");
+  const identityRegistry = await IdentityRegistry.deploy();
+  const identityRegistryAddress = await identityRegistry.getAddress();
+  console.log("IdentityRegistry:", identityRegistryAddress);
 
-  console.log("Deploying DoctorManagement...");
-  const doctor = await Doctor.deploy();
-  console.log("DoctorContract:", await doctor.getAddress());
+  console.log("Deploying ConsentLedger...");
+  const consentLedger = await ConsentLedger.deploy(identityRegistryAddress);
+  const consentLedgerAddress = await consentLedger.getAddress();
+  console.log("ConsentLedger:", consentLedgerAddress);
 
-  console.log("Deploying PatientManagement...");
-  const patient = await Patient.deploy();
-  console.log("PatientContract:", await patient.getAddress());
+  console.log("Deploying RecordRegistry...");
+  const recordRegistry = await RecordRegistry.deploy(identityRegistryAddress, consentLedgerAddress);
+  const recordRegistryAddress = await recordRegistry.getAddress();
+  console.log("RecordRegistry:", recordRegistryAddress);
 }
 
 main().catch((error) => {

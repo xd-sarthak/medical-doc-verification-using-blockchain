@@ -16,8 +16,8 @@ Comprehensive gas cost analysis and performance benchmarking for the Ethereum + 
 ```bash
 # Pull and start IPFS node
 docker run -d --name ipfs_node \
-  -p 5001:5001 \
-  -p 8080:8080 \
+  -p 127.0.0.1:5001:5001 \
+  -p 127.0.0.1:8080:8080 \
   ipfs/kubo
 
 # Verify it's running
@@ -207,7 +207,7 @@ Upload time scales roughly linearly with file size. The on-chain hash storage co
 
 | Issue | Solution |
 |---|---|
-| `IPFS node is NOT running` | Start Docker: `docker run -d --name ipfs_node -p 5001:5001 -p 8080:8080 ipfs/kubo` |
+| `IPFS node is NOT running` | Start Docker: `docker run -d --name ipfs_node -p 127.0.0.1:5001:5001 -p 127.0.0.1:8080:8080 ipfs/kubo` |
 | `Could not fetch live ETH price` | CoinGecko API may be rate-limited. Use `--eth-price 3500` flag. |
 | `QuickChart API returned HTTP 429` | Too many chart requests. Wait 60 seconds and retry. |
 | Benchmark takes too long | Reduce `iterations` or `documentCounts` in CONFIG |
