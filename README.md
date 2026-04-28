@@ -20,11 +20,12 @@ The Contracts:
 ## Key Features
 
 - **Decentralized medical document storage** — documents stored on IPFS, hashes anchored on Ethereum
+- **Client-side AES-GCM encryption** — documents are encrypted in the browser before upload; privacy is maintained even on public IPFS gateways
 - **Patient-controlled access management** — patients grant/revoke doctor access at any time
 - **Comprehensive action traceability** — every action logged to an immutable audit trail
 - **Transparent audit system** — on-chain audit logs for full accountability
 - **Gas cost benchmarking suite** — full performance analysis with charts and reports
-- **Optimized contract architecture** — IdentityRegistry, ConsentLedger, RecordRegistry
+- **Optimized & Upgradeable contract architecture** — UUPS Proxy pattern for IdentityRegistry, ConsentLedger, RecordRegistry
 
 ---
 
@@ -69,6 +70,7 @@ All project documentation is organized across the repository. Use the links belo
 | **Gas Cost Analysis** | Detailed gas cost measurements, IPFS performance, scalability analysis, and cost comparisons (Ethereum vs Polygon vs AWS) | [`blockchain/docs/gas-cost-analysis.md`](./blockchain/docs/gas-cost-analysis.md) |
 | **Benchmark Suite Guide** | How to run the benchmarking pipeline, methodology, configuration, output files, and troubleshooting | [`blockchain/BENCHMARKS.md`](./blockchain/BENCHMARKS.md) |
 | **Access Revocation Flow** | End-to-end documentation of patient revoking doctor access across smart contract and web app layers | [`revocation.md`](./revocation.md) |
+| **Security Audit Report** | Deep-dive into critical fixes including UUPS proxy pattern and client-side AES encryption | [`audit_report.md`](./audit_report.md) |
 
 ### Application Setup
 

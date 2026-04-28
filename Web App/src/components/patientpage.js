@@ -32,8 +32,8 @@ function statusLabel(status) {
   return { label: "Unknown", variant: "neutral" };
 }
 
-async function openEncryptedDocument(documentCid, mimeType, fileName, secret) {
-  const blob = await fetchIpfsBlob(documentCid);
+async function openEncryptedDocument(documentCid, mimeType, fileName, secret, password) {
+  const blob = await fetchIpfsBlob(documentCid, password);
   const plainBytes = await decryptBytes(blob, secret);
   const fileBlob = new Blob([plainBytes], { type: mimeType || "application/octet-stream" });
   const url = window.URL.createObjectURL(fileBlob);
@@ -246,6 +246,7 @@ export const PatientDashboard = ({ identityRegistry, consentLedger, recordRegist
   const [patientName, setPatientName] = useState("");
   const [revokeTarget, setRevokeTarget] = useState(null);
   const [loadingAction, setLoadingAction] = useState(null);
+  const [viewPassword, setViewPassword] = useState("");
 
   const loadDoctors = async () => {
     const identityEvents = await identityRegistry.queryFilter(identityRegistry.filters.IdentityRegistered());
@@ -491,14 +492,24 @@ export const PatientDashboard = ({ identityRegistry, consentLedger, recordRegist
                       )}
                     </div>
 
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => openEncryptedDocument(record.documentCid, record.mimeType, record.fileName, record.secret)}
-                      disabled={!record.verified || !record.documentCid || !record.secret}
-                    >
-                      View
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="password"
+                        placeholder="Password"
+                        className="form-input text-xs py-1"
+                        style={{ width: "100px" }}
+                        value={viewPassword}
+                        onChange={(e) => setViewPassword(e.target.value)}
+                      />
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => openEncryptedDocument(record.documentCid, record.mimeType, record.fileName, record.secret, viewPassword)}
+                        disabled={!record.verified || !record.documentCid || !record.secret}
+                      >
+                        View
+                      </Button>
+                    </div>
                   </div>
                 </Card>
               );

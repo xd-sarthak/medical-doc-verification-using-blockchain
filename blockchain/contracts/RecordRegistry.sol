@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
 import "./ConsentLedger.sol";
 import "./IdentityRegistry.sol";
 
-contract RecordRegistry {
+contract RecordRegistry is Initializable, UUPSUpgradeable, Ownable2StepUpgradeable {
     enum RecordStatus {
         None,
         Active,
@@ -24,9 +27,8 @@ contract RecordRegistry {
         RecordStatus status;
     }
 
-    IdentityRegistry public immutable identityRegistry;
-    ConsentLedger public immutable consentLedger;
-    address public immutable admin;
+    IdentityRegistry public identityRegistry;
+    ConsentLedger public consentLedger;
     uint64 public nextRecordId;
 
     mapping(uint64 => Record) public records;
@@ -72,19 +74,23 @@ contract RecordRegistry {
     error RecordNotActive();
     error RecordAuthorMismatch();
 
-    modifier onlyAdmin() {
-        if (msg.sender != admin) revert Unauthorized();
-        _;
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
     }
 
-    constructor(address registryAddress, address consentLedgerAddress) {
+    function initialize(address registryAddress, address consentLedgerAddress) initializer public {
         if (registryAddress == address(0)) revert InvalidRegistry();
         if (consentLedgerAddress == address(0)) revert InvalidConsentLedger();
 
+        __Ownable_init(msg.sender);
+        __Ownable2Step_init();
+
         identityRegistry = IdentityRegistry(registryAddress);
         consentLedger = ConsentLedger(consentLedgerAddress);
-        admin = msg.sender;
     }
+
+    function _authorizeUpgrade(address newImplementation) internal onlyOwner override {}
 
     function createRecord(
         address patient,
@@ -168,7 +174,7 @@ contract RecordRegistry {
         Record storage record = records[recordId];
         if (!_exists(record)) revert InvalidRecord();
         if (record.status != RecordStatus.Active) revert RecordNotActive();
-        if (msg.sender != record.patient && msg.sender != admin) revert Unauthorized();
+        if (msg.sender != record.patient && msg.sender != owner()) revert Unauthorized();
 
         uint40 revokedAt = _timestamp();
         record.status = RecordStatus.Revoked;

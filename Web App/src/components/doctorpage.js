@@ -24,8 +24,8 @@ import {
 import { decryptBytes, decryptJson, encryptBytes, encryptJson } from "../utils/crypto";
 import "../App.css";
 
-async function openEncryptedDocument(documentCid, mimeType, fileName, secret) {
-  const blob = await fetchIpfsBlob(documentCid);
+async function openEncryptedDocument(documentCid, mimeType, fileName, secret, password) {
+  const blob = await fetchIpfsBlob(documentCid, password);
   const plainBytes = await decryptBytes(blob, secret);
   const fileBlob = new Blob([plainBytes], { type: mimeType || "application/octet-stream" });
   const url = window.URL.createObjectURL(fileBlob);
@@ -262,10 +262,10 @@ export const DoctorDashboard = ({ identityRegistry, consentLedger, recordRegistr
   const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [doctorName, setDoctorName] = useState("");
-  const [file, setFile] = useState(null);
-  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [password, setPassword] = useState("");
+  const [viewPassword, setViewPassword] = useState("");
 
   const loadPatients = async () => {
     const identityEvents = await identityRegistry.queryFilter(identityRegistry.filters.IdentityRegistered());
@@ -333,7 +333,7 @@ export const DoctorDashboard = ({ identityRegistry, consentLedger, recordRegistr
     setUploading(true);
     try {
       const encryptedFile = await encryptBytes(await file.arrayBuffer(), secret);
-      const documentCid = await uploadFileToIPFS(encryptedFile);
+      const documentCid = await uploadFileToIPFS(encryptedFile, password);
       const documentHash = ethers.id(documentCid);
 
       const { recordRegistry: signedRecordRegistry } = await getSignedContracts();
@@ -357,7 +357,7 @@ export const DoctorDashboard = ({ identityRegistry, consentLedger, recordRegistr
         },
         secret
       );
-      const metadataCid = await uploadFileToIPFS(encryptedMetadata);
+      const metadataCid = await uploadFileToIPFS(encryptedMetadata, password);
       const metadataHash = ethers.id(metadataCid);
 
       const tx = await signedRecordRegistry.createRecord(selectedPatient.id, documentHash, metadataHash);
@@ -389,6 +389,7 @@ export const DoctorDashboard = ({ identityRegistry, consentLedger, recordRegistr
       setFile(null);
       setTitle("");
       setDescription("");
+      setPassword("");
       toast.success("Encrypted medical record added successfully!");
     } catch (error) {
       console.error("Add record error:", error);
@@ -473,14 +474,24 @@ export const DoctorDashboard = ({ identityRegistry, consentLedger, recordRegistr
                                 {record.verified ? "Metadata signature verified" : `Encrypted state: ${record.availability}`}
                               </p>
                             </div>
-                            <Button
-                              variant="secondary"
-                              size="sm"
-                              onClick={() => openEncryptedDocument(record.documentCid, record.mimeType, record.fileName, record.secret)}
-                              disabled={!record.verified || !record.documentCid || !record.secret}
-                            >
-                              View
-                            </Button>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="password"
+                                placeholder="Password"
+                                className="form-input text-xs py-1"
+                                style={{ width: "100px" }}
+                                value={viewPassword}
+                                onChange={(e) => setViewPassword(e.target.value)}
+                              />
+                              <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={() => openEncryptedDocument(record.documentCid, record.mimeType, record.fileName, record.secret, viewPassword)}
+                                disabled={!record.verified || !record.documentCid || !record.secret}
+                              >
+                                View
+                              </Button>
+                            </div>
                           </div>
                           {record.description && (
                             <p className="text-xs mt-2 pt-2" style={{ color: "var(--text-tertiary)", borderTop: "1px solid var(--border-subtle)" }}>
@@ -537,6 +548,21 @@ export const DoctorDashboard = ({ identityRegistry, consentLedger, recordRegistr
                   className="form-textarea"
                   rows="3"
                 />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Encryption Password (shared with patient)</label>
+                <input
+                  type="password"
+                  placeholder="Create a password for this record"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  className="form-input"
+                  required
+                />
+                <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>
+                  This password is required for decryption and is not stored on the blockchain.
+                </p>
               </div>
 
               <Button type="submit" variant="primary" fullWidth loading={uploading}>

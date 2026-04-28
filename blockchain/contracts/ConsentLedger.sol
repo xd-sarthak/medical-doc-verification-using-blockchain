@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
 import "./IdentityRegistry.sol";
 
-contract ConsentLedger {
+contract ConsentLedger is Initializable, UUPSUpgradeable, Ownable2StepUpgradeable {
     uint8 public constant SCOPE_VIEW = 1;
     uint8 public constant SCOPE_UPLOAD = 2;
     uint8 public constant SCOPE_FULL = SCOPE_VIEW | SCOPE_UPLOAD;
@@ -14,7 +17,7 @@ contract ConsentLedger {
         uint8 scope;
     }
 
-    IdentityRegistry public immutable identityRegistry;
+    IdentityRegistry public identityRegistry;
     mapping(address => mapping(address => ActiveConsent)) public activeConsents;
     mapping(address => mapping(address => uint32)) public consentNonces;
 
@@ -46,10 +49,20 @@ contract ConsentLedger {
     error ConsentNotRevocable();
     error ConsentNotExpired();
 
-    constructor(address registryAddress) {
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
+    function initialize(address registryAddress) initializer public {
         if (registryAddress == address(0)) revert InvalidRegistry();
+        __Ownable_init(msg.sender);
+        __Ownable2Step_init();
+        
         identityRegistry = IdentityRegistry(registryAddress);
     }
+
+    function _authorizeUpgrade(address newImplementation) internal onlyOwner override {}
 
     function grantConsent(
         address doctor,
