@@ -1,0 +1,115 @@
+{
+  "generatedAt": "2026-04-24T12:45:06.095Z",
+  "network": "hardhat",
+  "iterations": 5,
+  "operations": {
+    "registerPatient": {
+      "label": "registerPatient",
+      "iterations": 5,
+      "gas": {
+        "mean": 98222.6,
+        "min": 98213,
+        "max": 98225,
+        "stddev": 5.37,
+        "count": 5,
+        "raw": [
+          98225,
+          98213,
+          98225,
+          98225,
+          98225
+        ]
+      }
+    },
+    "registerDoctor": {
+      "label": "registerDoctor",
+      "iterations": 5,
+      "gas": {
+        "mean": 125543.6,
+        "min": 125534,
+        "max": 125546,
+        "stddev": 5.37,
+        "count": 5,
+        "raw": [
+          125546,
+          125546,
+          125546,
+          125546,
+          125534
+        ]
+      }
+    },
+    "addMedicalRecord": {
+      "label": "addMedicalRecord",
+      "iterations": 5,
+      "gas": {
+        "mean": 268717,
+        "min": 266477,
+        "max": 269277,
+        "stddev": 1252.2,
+        "count": 5,
+        "raw": [
+          266477,
+          269277,
+          269277,
+          269277,
+          269277
+        ]
+      }
+    },
+    "grantAccess": {
+      "label": "addPatientAccess",
+      "iterations": 5,
+      "gas": {
+        "mean": 93419.2,
+        "min": 93412,
+        "max": 93424,
+        "stddev": 6.57,
+        "count": 5,
+        "raw": [
+          93424,
+          93412,
+          93424,
+          93424,
+          93412
+        ]
+      }
+    },
+    "revokeAccess": {
+      "label": "revokePatientAccess",
+      "iterations": 5,
+      "gas": {
+        "mean": 34960.4,
+        "min": 34955,
+        "max": 34964,
+        "stddev": 4.93,
+        "count": 5,
+        "raw": [
+          34964,
+          34955,
+          34964,
+          34964,
+          34955
+        ]
+      }
+    },
+    "addAuditLog": {
+      "label": "addAuditLog",
+      "iterations": 5,
+      "gas": {
+        "mean": 150235,
+        "min": 146815,
+        "max": 163915,
+        "stddev": 7647.35,
+        "count": 5,
+        "raw": [
+          163915,
+          146815,
+          146815,
+          146815,
+          146815
+        ]
+      }
+    }
+  }
+}

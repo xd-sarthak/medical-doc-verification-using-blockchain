@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gas Benchmark Comparison</title>
+  <style>
+    :root {
+      --bg: #f4efe6;
+      --panel: #fffaf2;
+      --ink: #1c1a17;
+      --muted: #6b655c;
+      --line: #ddd1be;
+      --baseline: #b5542f;
+      --optimized: #1e7a5c;
+      --warn: #aa3d2f;
+      --good: #18794e;
+      --shadow: 0 12px 30px rgba(36, 28, 18, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background:
+        radial-gradient(circle at top left, rgba(181, 84, 47, 0.12), transparent 32%),
+        radial-gradient(circle at top right, rgba(30, 122, 92, 0.12), transparent 28%),
+        linear-gradient(180deg, #f7f1e8 0%, var(--bg) 100%);
+      color: var(--ink);
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      font-size: 0.82rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      line-height: 0.95;
+    }
+
+    .subtitle {
+      max-width: 760px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.6;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .controls {
+      padding: 18px;
+      display: grid;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .control-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .control {
+      display: grid;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    input[type="text"],
+    input[type="file"] {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fffdf9;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font: inherit;
+      cursor: pointer;
+      background: var(--ink);
+      color: white;
+    }
+
+    button.secondary {
+      background: #e9decd;
+      color: var(--ink);
+    }
+
+    .status {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #f7efe4;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .metric {
+      padding: 18px;
+    }
+
+    .metric .label {
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .metric .value {
+      font-size: clamp(1.6rem, 4vw, 2.5rem);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .metric .note {
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.94rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .chart-panel,
+    .detail-panel {
+      padding: 20px;
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 1.2rem;
+    }
+
+    .chart {
+      display: grid;
+      gap: 18px;
+    }
+
+    .row {
+      display: grid;
+      gap: 8px;
+    }
+
+    .row-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+    }
+
+    .row-title {
+      font-size: 1rem;
+    }
+
+    .row-meta {
+      font-size: 0.9rem;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    .bars {
+      display: grid;
+      gap: 8px;
+    }
+
+    .bar-wrap {
+      display: grid;
+      grid-template-columns: 110px 1fr 76px;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.92rem;
+    }
+
+    .bar-label {
+      color: var(--muted);
+    }
+
+    .bar-track {
+      position: relative;
+      height: 16px;
+      border-radius: 999px;
+      background: #ece3d6;
+      overflow: hidden;
+    }
+
+    .bar {
+      position: absolute;
+      inset: 0 auto 0 0;
+      border-radius: 999px;
+    }
+
+    .bar.baseline {
+      background: linear-gradient(90deg, #cf7752, var(--baseline));
+    }
+
+    .bar.optimized {
+      background: linear-gradient(90deg, #43a27f, var(--optimized));
+    }
+
+    .bar-value {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .detail-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .detail-item {
+      padding: 14px;
+      border-radius: 16px;
+      background: #fffdf8;
+      border: 1px solid var(--line);
+    }
+
+    .detail-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .delta {
+      font-weight: 700;
+    }
+
+    .delta.good {
+      color: var(--good);
+    }
+
+    .delta.bad {
+      color: var(--warn);
+    }
+
+    .delta.na {
+      color: var(--muted);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 22px;
+      background: var(--panel);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    th,
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      background: #f9f3ea;
+    }
+
+    td {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .empty {
+      padding: 20px;
+      border: 1px dashed var(--line);
+      border-radius: 16px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.45);
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .bar-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .bar-value {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <div class="eyebrow">Medical Blockchain Paper Dashboard</div>
+      <h1>Gas Benchmark Comparison</h1>
+      <p class="subtitle">
+        Compare the current prototype against the optimized consent-aware Polygon architecture. This page reads
+        <code>baseline-gas-results.json</code> and <code>optimized-gas-results.json</code>, then visualizes the
+        transaction-cost differences that matter in your paper.
+      </p>
+    </section>
+
+    <section class="panel controls">
+      <div class="control-grid">
+        <div class="control">
+          <label for="baselinePath">Baseline JSON Path</label>
+          <input id="baselinePath" type="text" value="./baseline-gas-results.json">
+        </div>
+        <div class="control">
+          <label for="optimizedPath">Optimized JSON Path</label>
+          <input id="optimizedPath" type="text" value="./optimized-gas-results.json">
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="loadDefaults">Load JSON Files</button>
+        <button id="loadSamples" class="secondary">Use Whatever Exists</button>
+      </div>
+
+      <div class="control-grid">
+        <div class="control">
+          <label for="baselineFile">Upload Baseline JSON</label>
+          <input id="baselineFile" type="file" accept=".json,application/json">
+        </div>
+        <div class="control">
+          <label for="optimizedFile">Upload Optimized JSON</label>
+          <input id="optimizedFile" type="file" accept=".json,application/json">
+        </div>
+      </div>
+
+      <div id="status" class="status">
+        Ready. If you open this file directly and browser fetch is blocked, use the upload inputs or serve
+        <code>blockchain/data</code> with a simple local server.
+      </div>
+    </section>
+
+    <section class="metrics" id="metrics"></section>
+
+    <section class="layout">
+      <div class="panel chart-panel">
+        <h2>Per-Operation Comparison</h2>
+        <div id="chart" class="chart"></div>
+      </div>
+
+      <div class="panel detail-panel">
+        <h2>Research Signals</h2>
+        <div id="detailList" class="detail-list"></div>
+      </div>
+    </section>
+
+    <table id="comparisonTable" hidden>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Baseline Mean Gas</th>
+          <th>Optimized Mean Gas</th>
+          <th>Difference</th>
+          <th>Reading</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    const mappings = [
+      {
+        category: "Patient Registration",
+        baselineKey: "registerPatient",
+        optimizedKey: "registerPatients",
+        note: "Prototype patient registration versus optimized identity registration.",
+      },
+      {
+        category: "Doctor Registration",
+        baselineKey: "registerDoctor",
+        optimizedKey: "registerDoctors",
+        note: "Doctor registration versus role-based identity registry write.",
+      },
+      {
+        category: "Access Grant / Consent Grant",
+        baselineKey: "grantAccess",
+        optimizedKey: "grantConsent",
+        note: "Boolean allow-list grant versus explicit consent object.",
+      },
+      {
+        category: "Access Revoke / Consent Revoke",
+        baselineKey: "revokeAccess",
+        optimizedKey: "revokeConsent",
+        note: "Legacy access revoke versus consent lifecycle revoke.",
+      },
+      {
+        category: "Record Creation",
+        baselineKey: "addMedicalRecord",
+        optimizedKey: "createRecord",
+        note: "The highest-value gas comparison: verbose on-chain metadata versus compact hash-based record creation.",
+      },
+      {
+        category: "Record Update",
+        baselineKey: null,
+        optimizedKey: "updateRecord",
+        note: "New optimized capability. The old benchmark has no separate update measurement.",
+      },
+      {
+        category: "Audit Write",
+        baselineKey: "addAuditLog",
+        optimizedKey: null,
+        note: "The optimized design removes the dedicated audit-storage transaction and relies on emitted events.",
+      },
+      {
+        category: "Record Revoke",
+        baselineKey: null,
+        optimizedKey: "revokeRecord",
+        note: "New lifecycle control added in the optimized design.",
+      },
+    ];
+
+    const state = {
+      baseline: null,
+      optimized: null,
+    };
+
+    const metricsEl = document.getElementById("metrics");
+    const chartEl = document.getElementById("chart");
+    const detailListEl = document.getElementById("detailList");
+    const tableEl = document.getElementById("comparisonTable");
+    const tableBodyEl = tableEl.querySelector("tbody");
+    const statusEl = document.getElementById("status");
+
+    function setStatus(message) {
+      statusEl.innerHTML = message;
+    }
+
+    function formatGas(value) {
+      if (value === null || value === undefined || Number.isNaN(value)) {
+        return "N/A";
+      }
+      return Math.round(value).toLocaleString("en-US");
+    }
+
+    function getMean(data, key) {
+      return data?.operations?.[key]?.gas?.mean ?? null;
+    }
+
+    function sumComparable(data, mode) {
+      return mappings.reduce((sum, entry) => {
+        const key = mode === "baseline" ? entry.baselineKey : entry.optimizedKey;
+        const value = getMean(data, key);
+        return value === null ? sum : sum + value;
+      }, 0);
+    }
+
+    function buildRows() {
+      return mappings.map((entry) => {
+        const baseline = getMean(state.baseline, entry.baselineKey);
+        const optimized = getMean(state.optimized, entry.optimizedKey);
+        const comparable = baseline !== null && optimized !== null;
+        const diff = comparable ? optimized - baseline : null;
+        const pct = comparable && baseline !== 0 ? (diff / baseline) * 100 : null;
+        return { ...entry, baseline, optimized, diff, pct, comparable };
+      });
+    }
+
+    function renderMetrics(rows) {
+      const baselineTotal = sumComparable(state.baseline, "baseline");
+      const optimizedTotal = sumComparable(state.optimized, "optimized");
+      const matchedRows = rows.filter((row) => row.comparable);
+      const totalImprovement = (matchedRows.length && baselineTotal)
+        ? ((optimizedTotal - baselineTotal) / baselineTotal) * 100
+        : null;
+
+      metricsEl.innerHTML = "";
+
+      const cards = [
+        {
+          label: "Baseline Total",
+          value: state.baseline ? formatGas(baselineTotal) : "N/A",
+          note: "Sum of available baseline means across mapped operations.",
+        },
+        {
+          label: "Optimized Total",
+          value: state.optimized ? formatGas(optimizedTotal) : "N/A",
+          note: "Sum of available optimized means across mapped operations.",
+        },
+        {
+          label: "Matched Comparisons",
+          value: matchedRows.length.toString(),
+          note: "Operations where both baseline and optimized measurements exist.",
+        },
+        {
+          label: "Overall Delta",
+          value: totalImprovement === null ? "N/A" : `${totalImprovement.toFixed(1)}%`,
+          note: totalImprovement === null
+            ? "Generate optimized-gas-results.json to compute end-to-end delta."
+            : totalImprovement < 0
+              ? "Negative is good here: the optimized design uses less gas overall."
+              : "Positive means the optimized design is currently more expensive overall.",
+        },
+      ];
+
+      for (const card of cards) {
+        const el = document.createElement("article");
+        el.className = "panel metric";
+        el.innerHTML = `
+          <div class="label">${card.label}</div>
+          <div class="value">${card.value}</div>
+          <div class="note">${card.note}</div>
+        `;
+        metricsEl.appendChild(el);
+      }
+    }
+
+    function renderChart(rows) {
+      chartEl.innerHTML = "";
+      const values = rows.flatMap((row) => [row.baseline, row.optimized]).filter((value) => value !== null);
+
+      if (!values.length) {
+        chartEl.innerHTML = '<div class="empty">No benchmark data loaded yet.</div>';
+        return;
+      }
+
+      const maxValue = Math.max(...values);
+
+      for (const row of rows) {
+        const el = document.createElement("div");
+        el.className = "row";
+
+        const deltaText = row.comparable
+          ? `${row.pct.toFixed(1)}%`
+          : row.optimized !== null && row.baseline === null
+            ? "new op"
+            : row.baseline !== null && row.optimized === null
+              ? "removed tx"
+              : "pending";
+
+        el.innerHTML = `
+          <div class="row-head">
+            <div class="row-title">${row.category}</div>
+            <div class="row-meta">${deltaText}</div>
+          </div>
+          <div class="bars">
+            <div class="bar-wrap">
+              <div class="bar-label">Baseline</div>
+              <div class="bar-track">
+                <div class="bar baseline" style="width: ${row.baseline !== null ? (row.baseline / maxValue) * 100 : 0}%"></div>
+              </div>
+              <div class="bar-value">${formatGas(row.baseline)}</div>
+            </div>
+            <div class="bar-wrap">
+              <div class="bar-label">Optimized</div>
+              <div class="bar-track">
+                <div class="bar optimized" style="width: ${row.optimized !== null ? (row.optimized / maxValue) * 100 : 0}%"></div>
+              </div>
+              <div class="bar-value">${formatGas(row.optimized)}</div>
+            </div>
+          </div>
+        `;
+
+        chartEl.appendChild(el);
+      }
+    }
+
+    function renderDetails(rows) {
+      detailListEl.innerHTML = "";
+
+      const highlights = [
+        rows.find((row) => row.category === "Record Creation"),
+        rows.find((row) => row.category === "Audit Write"),
+        rows.find((row) => row.category === "Access Grant / Consent Grant"),
+      ].filter(Boolean);
+
+      if (!highlights.length) {
+        detailListEl.innerHTML = '<div class="empty">Load benchmark data to generate the research summary.</div>';
+        return;
+      }
+
+      for (const row of highlights) {
+        const deltaClass = row.comparable
+          ? (row.diff < 0 ? "good" : "bad")
+          : "na";
+
+        const deltaLabel = row.comparable
+          ? `${row.diff < 0 ? "" : "+"}${Math.round(row.diff).toLocaleString("en-US")} gas`
+          : row.optimized !== null && row.baseline === null
+            ? "New optimized-only operation"
+            : row.baseline !== null && row.optimized === null
+              ? "Removed standalone transaction"
+              : "Comparison pending";
+
+        const item = document.createElement("div");
+        item.className = "detail-item";
+        item.innerHTML = `
+          <div class="detail-top">
+            <strong>${row.category}</strong>
+            <span class="delta ${deltaClass}">${deltaLabel}</span>
+          </div>
+          <div class="small">${row.note}</div>
+        `;
+        detailListEl.appendChild(item);
+      }
+    }
+
+    function renderTable(rows) {
+      tableBodyEl.innerHTML = "";
+      tableEl.hidden = false;
+
+      for (const row of rows) {
+        const tr = document.createElement("tr");
+
+        let reading = row.note;
+        let diffText = "N/A";
+
+        if (row.comparable) {
+          diffText = `${row.diff < 0 ? "" : "+"}${formatGas(row.diff)} gas (${row.pct.toFixed(1)}%)`;
+          reading = row.diff < 0
+            ? `Improvement. The optimized path is cheaper by ${Math.abs(row.pct).toFixed(1)}%.`
+            : `Regression. The optimized path is costlier by ${row.pct.toFixed(1)}%.`;
+        } else if (row.optimized !== null && row.baseline === null) {
+          reading = "New capability in the optimized architecture.";
+        } else if (row.baseline !== null && row.optimized === null) {
+          reading = "Standalone transaction removed in favor of event-based or integrated workflow.";
+        }
+
+        tr.innerHTML = `
+          <td>${row.category}</td>
+          <td>${formatGas(row.baseline)}</td>
+          <td>${formatGas(row.optimized)}</td>
+          <td>${diffText}</td>
+          <td class="small">${reading}</td>
+        `;
+        tableBodyEl.appendChild(tr);
+      }
+    }
+
+    function render() {
+      const rows = buildRows();
+      renderMetrics(rows);
+      renderChart(rows);
+      renderDetails(rows);
+      renderTable(rows);
+    }
+
+    async function fetchJson(path) {
+      const response = await fetch(path);
+      if (!response.ok) {
+        throw new Error(`Failed to load ${path} (${response.status})`);
+      }
+      return response.json();
+    }
+
+    async function loadFromPaths() {
+      const baselinePath = document.getElementById("baselinePath").value.trim();
+      const optimizedPath = document.getElementById("optimizedPath").value.trim();
+
+      const messages = [];
+
+      try {
+        state.baseline = await fetchJson(baselinePath);
+        messages.push(`Loaded baseline from <code>${baselinePath}</code>.`);
+      } catch (error) {
+        state.baseline = null;
+        messages.push(`Could not load baseline automatically: ${error.message}.`);
+      }
+
+      try {
+        state.optimized = await fetchJson(optimizedPath);
+        messages.push(`Loaded optimized results from <code>${optimizedPath}</code>.`);
+      } catch (error) {
+        state.optimized = null;
+        messages.push(`Could not load optimized automatically: ${error.message}.`);
+      }
+
+      setStatus(messages.join("<br>"));
+      render();
+    }
+
+    async function readFileInput(input) {
+      const file = input.files?.[0];
+      if (!file) return null;
+      const text = await file.text();
+      return JSON.parse(text);
+    }
+
+    async function loadFromFiles() {
+      const messages = [];
+
+      try {
+        const baseline = await readFileInput(document.getElementById("baselineFile"));
+        if (baseline) {
+          state.baseline = baseline;
+          messages.push("Loaded baseline JSON from uploaded file.");
+        }
+      } catch (error) {
+        messages.push(`Baseline upload failed: ${error.message}.`);
+      }
+
+      try {
+        const optimized = await readFileInput(document.getElementById("optimizedFile"));
+        if (optimized) {
+          state.optimized = optimized;
+          messages.push("Loaded optimized JSON from uploaded file.");
+        }
+      } catch (error) {
+        messages.push(`Optimized upload failed: ${error.message}.`);
+      }
+
+      if (messages.length) {
+        setStatus(messages.join("<br>"));
+        render();
+      }
+    }
+
+    document.getElementById("loadDefaults").addEventListener("click", loadFromPaths);
+    document.getElementById("loadSamples").addEventListener("click", loadFromPaths);
+    document.getElementById("baselineFile").addEventListener("change", loadFromFiles);
+    document.getElementById("optimizedFile").addEventListener("change", loadFromFiles);
+
+    render();
+  </script>
+</body>
+</html>

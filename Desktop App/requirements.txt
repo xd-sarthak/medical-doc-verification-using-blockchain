@@ -1,5 +1,0 @@
-web3
-pillow
-customtkinter
-eth-account
-requests

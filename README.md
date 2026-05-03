@@ -20,12 +20,12 @@ The Contracts:
 ## Key Features
 
 - **Decentralized medical document storage** — documents stored on IPFS, hashes anchored on Ethereum
+- **Client-side AES-GCM encryption** — documents are encrypted in the browser before upload; privacy is maintained even on public IPFS gateways
 - **Patient-controlled access management** — patients grant/revoke doctor access at any time
 - **Comprehensive action traceability** — every action logged to an immutable audit trail
 - **Transparent audit system** — on-chain audit logs for full accountability
-- **Automatic document opening** — desktop app opens documents in native applications
 - **Gas cost benchmarking suite** — full performance analysis with charts and reports
-- **Three-contract architecture** — PatientManagement, DoctorManagement, HealthcareAudit
+- **Optimized & Upgradeable contract architecture** — UUPS Proxy pattern for IdentityRegistry, ConsentLedger, RecordRegistry
 
 ---
 
@@ -34,11 +34,6 @@ The Contracts:
 ### Web Application (ReactJS)
 A responsive web application enabling patients, doctors, and administrators to securely manage and access medical documents. Features blockchain wallet authentication (MetaMask), an intuitive interface, and granular access control system.
 
-### Desktop Application (Tkinter/CustomTkinter)
-A cross-platform desktop version offering identical functionalities to the web application. Supports username/password authentication, compatible with Windows, macOS, and Linux, with automatic document opening in native applications.
-
----
-
 ## Technologies
 
 | Layer | Technology |
@@ -46,7 +41,6 @@ A cross-platform desktop version offering identical functionalities to the web a
 | **Blockchain** | Ethereum (Solidity 0.8.20, Hardhat) |
 | **Storage** | IPFS (Kubo via Docker) |
 | **Web Frontend** | React.js |
-| **Desktop Frontend** | Python, Tkinter, CustomTkinter |
 | **Smart Contracts** | Solidity |
 | **Benchmarking** | Hardhat scripts, QuickChart API |
 | **Languages** | Python, JavaScript, Solidity |
@@ -75,14 +69,14 @@ All project documentation is organized across the repository. Use the links belo
 |----------|-------------|------|
 | **Gas Cost Analysis** | Detailed gas cost measurements, IPFS performance, scalability analysis, and cost comparisons (Ethereum vs Polygon vs AWS) | [`blockchain/docs/gas-cost-analysis.md`](./blockchain/docs/gas-cost-analysis.md) |
 | **Benchmark Suite Guide** | How to run the benchmarking pipeline, methodology, configuration, output files, and troubleshooting | [`blockchain/BENCHMARKS.md`](./blockchain/BENCHMARKS.md) |
-| **Access Revocation Flow** | End-to-end documentation of patient revoking doctor access across smart contract, web app, and desktop app layers | [`revocation.md`](./revocation.md) |
+| **Access Revocation Flow** | End-to-end documentation of patient revoking doctor access across smart contract and web app layers | [`revocation.md`](./revocation.md) |
+| **Security Audit Report** | Deep-dive into critical fixes including UUPS proxy pattern and client-side AES encryption | [`audit_report.md`](./audit_report.md) |
 
 ### Application Setup
 
 | Document | Description | Path |
 |----------|-------------|------|
 | **Web App README** | Running the React web application, features per role (admin, doctor, patient), and screenshots | [`Web App/README.md`](./Web%20App/README.md) |
-| **Desktop App README** | Running the Python/Tkinter desktop application, features per role, and screenshots | [`Desktop App/README.md`](./Desktop%20App/README.md) |
 
 ### Benchmark Data & Reports
 
@@ -183,25 +177,14 @@ npx hardhat node
 
 2. Run the IPFS container:
    ```bash
-   docker run -d --name ipfs_node -v ipfs_data:/data/ipfs -p 4001:4001 -p 5001:5001 -p 8080:8080 ipfs/kubo
+   docker run -d --name ipfs_node -v ipfs_data:/data/ipfs -p 4001:4001 -p 127.0.0.1:5001:5001 -p 127.0.0.1:8080:8080 ipfs/kubo
    ```
    - `-v ipfs_data:/data/ipfs`: Persistent storage for IPFS data.
    - `-p 4001:4001`: Peer-to-peer communication.
-   - `-p 5001:5001`: API access.
-   - `-p 8080:8080`: Gateway access.
+   - `-p 127.0.0.1:5001:5001`: Loopback-only API access.
+   - `-p 127.0.0.1:8080:8080`: Loopback-only gateway access.
 
-3. Modify the API Configuration:
-
-   Go to your container, enter the files, `data/IPFS/config`:
-   ```json
-   "API": {
-       "HTTPHeaders": {
-         "Access-Control-Allow-Origin": ["*"]
-       }
-     },
-   ```
-
-   ![](./imgs/img0.png)
+3. Do not enable wildcard CORS or public API access. Keep the IPFS API and gateway bound to loopback only.
 
 ---
 
@@ -229,11 +212,8 @@ Output is written to `blockchain/data/` — see the [Documentation Guide](#-docu
 
 ---
 
-You will need the setups above to run the Desktop App and the Web App. You will find the instructions for running each app in their respective folders:
+You will need the setups above to run the web application:
 - [Web App Setup](./Web%20App/README.md)
-- [Desktop App Setup](./Desktop%20App/README.md)
-
-> **Note:** The Desktop App and the Web App use the same contracts (contract addresses and ABI), and the same IPFS node.
 
 ---
 
@@ -251,7 +231,7 @@ You will need the setups above to run the Desktop App and the Web App. You will 
 - Check container logs for errors: `docker logs ipfs_node`
 
 ### Benchmarking Suite
-- **IPFS not running?** Start Docker: `docker run -d --name ipfs_node -p 5001:5001 -p 8080:8080 ipfs/kubo`
+- **IPFS not running?** Start Docker: `docker run -d --name ipfs_node -p 127.0.0.1:5001:5001 -p 127.0.0.1:8080:8080 ipfs/kubo`
 - **ETH price fetch failed?** CoinGecko API may be rate-limited. Use `--eth-price 3500` flag.
 - **QuickChart HTTP 429?** Too many chart requests. Wait 60 seconds and retry.
 - **Benchmark too slow?** Reduce `iterations` or `documentCounts` in `scripts/benchmark.js` CONFIG.
@@ -280,6 +260,5 @@ Medical-Record-With-Blockchain/
 │   ├── BENCHMARKS.md            # Benchmark suite guide
 │   └── hardhat.config.js
 ├── Web App/                     # React web application
-├── Desktop App/                 # Python/Tkinter desktop application
 └── imgs/                        # Screenshots and diagrams
 ```

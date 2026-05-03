@@ -1,0 +1,133 @@
+{
+  "generatedAt": "2026-04-28T20:28:46.285Z",
+  "network": "hardhat",
+  "iterations": 5,
+  "operations": {
+    "registerPatients": {
+      "label": "optimizedRegisterPatientIdentity",
+      "iterations": 5,
+      "gas": {
+        "mean": 47717.6,
+        "min": 47708,
+        "max": 47720,
+        "stddev": 5.37,
+        "count": 5,
+        "raw": [
+          47720,
+          47708,
+          47720,
+          47720,
+          47720
+        ]
+      }
+    },
+    "registerDoctors": {
+      "label": "optimizedRegisterDoctorIdentity",
+      "iterations": 5,
+      "gas": {
+        "mean": 47717.6,
+        "min": 47708,
+        "max": 47720,
+        "stddev": 5.37,
+        "count": 5,
+        "raw": [
+          47720,
+          47720,
+          47720,
+          47720,
+          47708
+        ]
+      }
+    },
+    "grantConsent": {
+      "label": "grantConsent",
+      "iterations": 5,
+      "gas": {
+        "mean": 84444.6,
+        "min": 84435,
+        "max": 84447,
+        "stddev": 5.37,
+        "count": 5,
+        "raw": [
+          84447,
+          84447,
+          84447,
+          84447,
+          84435
+        ]
+      }
+    },
+    "createRecord": {
+      "label": "createRecord",
+      "iterations": 5,
+      "gas": {
+        "mean": 190627.2,
+        "min": 187188,
+        "max": 204312,
+        "stddev": 7650.04,
+        "count": 5,
+        "raw": [
+          204312,
+          187188,
+          187212,
+          187212,
+          187212
+        ]
+      }
+    },
+    "revokeConsent": {
+      "label": "revokeConsent",
+      "iterations": 5,
+      "gas": {
+        "mean": 27597.6,
+        "min": 27588,
+        "max": 27600,
+        "stddev": 5.37,
+        "count": 5,
+        "raw": [
+          27600,
+          27600,
+          27600,
+          27600,
+          27588
+        ]
+      }
+    },
+    "updateRecord": {
+      "label": "updateRecord",
+      "iterations": 5,
+      "gas": {
+        "mean": 181401,
+        "min": 181401,
+        "max": 181401,
+        "stddev": 0,
+        "count": 5,
+        "raw": [
+          181401,
+          181401,
+          181401,
+          181401,
+          181401
+        ]
+      }
+    },
+    "revokeRecord": {
+      "label": "revokeRecord",
+      "iterations": 5,
+      "gas": {
+        "mean": 42448,
+        "min": 42448,
+        "max": 42448,
+        "stddev": 0,
+        "count": 5,
+        "raw": [
+          42448,
+          42448,
+          42448,
+          42448,
+          42448
+        ]
+      }
+    }
+  }
+}

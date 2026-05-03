@@ -4,16 +4,25 @@
   "description": "Medical Document Management System — Ethereum + IPFS",
   "main": "index.js",
   "scripts": {
-    "compile": "npx hardhat compile",
-    "deploy": "npx hardhat run scripts/deploy.js --network localhost",
-    "benchmark": "npx hardhat run scripts/benchmark.js --network hardhat",
+    "compile": "node ./node_modules/hardhat/internal/cli/bootstrap.js compile",
+    "compile:local": "node scripts/manual-compile.js",
+    "deploy": "node ./node_modules/hardhat/internal/cli/bootstrap.js run scripts/deploy.js --network localhost",
+    "deploy:v2": "node ./node_modules/hardhat/internal/cli/bootstrap.js run scripts/deploy-v2.js --network localhost",
+    "deploy:v2:hardhat": "node ./node_modules/hardhat/internal/cli/bootstrap.js run scripts/deploy-v2.js --network hardhat",
+    "benchmark:baseline": "node ./node_modules/hardhat/internal/cli/bootstrap.js run scripts/baseline-gas.js --network hardhat",
+    "benchmark:optimized": "node ./node_modules/hardhat/internal/cli/bootstrap.js run scripts/optimized-gas.js --network hardhat",
+    "benchmark:optimized:local": "node ./node_modules/hardhat/internal/cli/bootstrap.js run --no-compile scripts/optimized-gas.js --network hardhat",
+    "benchmark": "node ./node_modules/hardhat/internal/cli/bootstrap.js run scripts/benchmark.js --network hardhat",
+    "compare:gas": "node scripts/compare-gas.js",
+    "run:optimized-flow": "bash scripts/run-optimized-flow.sh",
     "analyze": "node scripts/analyze-results.js",
     "generate-graphs": "node scripts/generate-graphs.js",
     "benchmark:report": "node scripts/generate-benchmark-report.js",
     "benchmark:full": "npm run benchmark && npm run analyze && npm run generate-graphs && npm run benchmark:report",
-    "test": "npx hardhat test",
-    "test:report": "npx hardhat test && node scripts/generate-test-report.js",
-    "test:coverage": "npx hardhat coverage"
+    "test": "node ./node_modules/hardhat/internal/cli/bootstrap.js test",
+    "test:local": "node ./node_modules/hardhat/internal/cli/bootstrap.js test --no-compile",
+    "test:report": "node ./node_modules/hardhat/internal/cli/bootstrap.js test && node scripts/generate-test-report.js",
+    "test:coverage": "node ./node_modules/hardhat/internal/cli/bootstrap.js coverage"
   },
   "keywords": [],
   "author": "",
@@ -44,5 +53,9 @@
     "ts-node": "^10.9.2",
     "typechain": "^8.3.2",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts-upgradeable": "^5.6.1",
+    "@openzeppelin/hardhat-upgrades": "^3.9.1"
   }
 }
