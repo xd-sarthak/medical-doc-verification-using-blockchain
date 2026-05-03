@@ -9,11 +9,8 @@ import { PageLoader } from "./components/common/Loader";
 import identityRegistryABI from "./ABI/identityRegistryABI.json";
 import consentLedgerABI from "./ABI/consentLedgerABI.json";
 import recordRegistryABI from "./ABI/recordRegistryABI.json";
+import { contractAddresses } from "./config/contracts";
 import "./App.css";
-
-const identityRegistryAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-const consentLedgerAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
-const recordRegistryAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
 
 const Home = ({ identityRegistry, account, connectWallet }) => {
   const [error, setError] = useState("");
@@ -33,7 +30,7 @@ const Home = ({ identityRegistry, account, connectWallet }) => {
         return;
       }
 
-      const admin = await identityRegistry.admin();
+      const admin = await identityRegistry.owner();
       if (admin.toLowerCase() !== selectedAccount.toLowerCase()) {
         setError("Not authorized as admin");
         toast.error("Wallet is not authorized as admin");
@@ -186,28 +183,39 @@ const App = () => {
   };
 
   useEffect(() => {
+    let providerRef = null;
+
+    const handleAccountsChanged = async (accounts) => {
+      setAccount(accounts[0] || "");
+      if (accounts[0] && providerRef) {
+        setSigner(await providerRef.getSigner());
+      } else {
+        setSigner(null);
+      }
+    };
+
     const init = async () => {
       if (!window.ethereum) {
         return;
       }
 
       const nextProvider = new BrowserProvider(window.ethereum);
+      providerRef = nextProvider;
       setProvider(nextProvider);
-      setIdentityRegistry(new Contract(identityRegistryAddress, identityRegistryABI, nextProvider));
-      setConsentLedger(new Contract(consentLedgerAddress, consentLedgerABI, nextProvider));
-      setRecordRegistry(new Contract(recordRegistryAddress, recordRegistryABI, nextProvider));
+      setIdentityRegistry(new Contract(contractAddresses.identityRegistry, identityRegistryABI, nextProvider));
+      setConsentLedger(new Contract(contractAddresses.consentLedger, consentLedgerABI, nextProvider));
+      setRecordRegistry(new Contract(contractAddresses.recordRegistry, recordRegistryABI, nextProvider));
 
-      window.ethereum.on("accountsChanged", async (accounts) => {
-        setAccount(accounts[0] || "");
-        if (accounts[0]) {
-          setSigner(await nextProvider.getSigner());
-        } else {
-          setSigner(null);
-        }
-      });
+      window.ethereum.on("accountsChanged", handleAccountsChanged);
     };
 
     init();
+
+    return () => {
+      if (window.ethereum?.removeListener) {
+        window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
+      }
+    };
   }, []);
 
   const getSignedContracts = async () => {
