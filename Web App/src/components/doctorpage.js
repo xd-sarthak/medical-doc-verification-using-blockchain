@@ -22,21 +22,10 @@ import {
   verifyMetadataSignature,
 } from "../utils/optimizedRegistry";
 import { decryptBytes, decryptJson, encryptBytes, encryptJson } from "../utils/crypto";
+import { openEncryptedDocument } from "../utils/sharedCrypto";
 import "../App.css";
 
-async function openEncryptedDocument(documentCid, mimeType, fileName, secret, password) {
-  const blob = await fetchIpfsBlob(documentCid, password);
-  const plainBytes = await decryptBytes(blob, secret);
-  const fileBlob = new Blob([plainBytes], { type: mimeType || "application/octet-stream" });
-  const url = window.URL.createObjectURL(fileBlob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.target = "_blank";
-  link.rel = "noreferrer";
-  link.download = fileName || "medical-record";
-  link.click();
-  window.setTimeout(() => window.URL.revokeObjectURL(url), 1000);
-}
+// openEncryptedDocument is now imported from ../utils/sharedCrypto
 
 async function resolveRecordView(recordRegistry, patientAddress, doctorAddress, recordId) {
   const record = await recordRegistry.getRecord(recordId);
@@ -262,10 +251,13 @@ export const DoctorDashboard = ({ identityRegistry, consentLedger, recordRegistr
   const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [doctorName, setDoctorName] = useState("");
+  const [title, setTitle] = useState("");
+  const [file, setFile] = useState(null);
   const [description, setDescription] = useState("");
   const [uploading, setUploading] = useState(false);
   const [password, setPassword] = useState("");
   const [viewPassword, setViewPassword] = useState("");
+  const [loadingData, setLoadingData] = useState(true);
 
   const loadPatients = async () => {
     const identityEvents = await identityRegistry.queryFilter(identityRegistry.filters.IdentityRegistered());
@@ -297,6 +289,7 @@ export const DoctorDashboard = ({ identityRegistry, consentLedger, recordRegistr
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoadingData(true);
       try {
         const isDoctor = await identityRegistry.hasRole(id, ROLE_DOCTOR);
         if (!isDoctor) {
@@ -310,6 +303,8 @@ export const DoctorDashboard = ({ identityRegistry, consentLedger, recordRegistr
       } catch (error) {
         console.error("Error fetching data:", error);
         toast.error("Failed to load patient data");
+      } finally {
+        setLoadingData(false);
       }
     };
 

@@ -23,6 +23,7 @@ import {
   verifyMetadataSignature,
 } from "../utils/optimizedRegistry";
 import { decryptBytes, decryptJson, generateConsentSecret } from "../utils/crypto";
+import { openEncryptedDocument } from "../utils/sharedCrypto";
 import "../App.css";
 
 function statusLabel(status) {
@@ -32,19 +33,7 @@ function statusLabel(status) {
   return { label: "Unknown", variant: "neutral" };
 }
 
-async function openEncryptedDocument(documentCid, mimeType, fileName, secret, password) {
-  const blob = await fetchIpfsBlob(documentCid, password);
-  const plainBytes = await decryptBytes(blob, secret);
-  const fileBlob = new Blob([plainBytes], { type: mimeType || "application/octet-stream" });
-  const url = window.URL.createObjectURL(fileBlob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.target = "_blank";
-  link.rel = "noreferrer";
-  link.download = fileName || "medical-record";
-  link.click();
-  window.setTimeout(() => window.URL.revokeObjectURL(url), 1000);
-}
+// openEncryptedDocument is now imported from ../utils/sharedCrypto
 
 async function fetchPatientRecords(recordRegistry, patientAddress) {
   const latestRecordId = Number(await recordRegistry.nextRecordId());
@@ -246,7 +235,8 @@ export const PatientDashboard = ({ identityRegistry, consentLedger, recordRegist
   const [patientName, setPatientName] = useState("");
   const [revokeTarget, setRevokeTarget] = useState(null);
   const [loadingAction, setLoadingAction] = useState(null);
-  const [viewPassword, setViewPassword] = useState("");
+  const [viewPasswords, setViewPasswords] = useState({});
+  const [loadingData, setLoadingData] = useState(true);
 
   const loadDoctors = async () => {
     const identityEvents = await identityRegistry.queryFilter(identityRegistry.filters.IdentityRegistered());
@@ -281,6 +271,7 @@ export const PatientDashboard = ({ identityRegistry, consentLedger, recordRegist
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoadingData(true);
       try {
         const isPatient = await identityRegistry.hasRole(id, ROLE_PATIENT);
         if (!isPatient) {
@@ -294,6 +285,8 @@ export const PatientDashboard = ({ identityRegistry, consentLedger, recordRegist
       } catch (error) {
         console.error("Error fetching data:", error);
         toast.error("Failed to load dashboard data");
+      } finally {
+        setLoadingData(false);
       }
     };
 
@@ -498,13 +491,13 @@ export const PatientDashboard = ({ identityRegistry, consentLedger, recordRegist
                         placeholder="Password"
                         className="form-input text-xs py-1"
                         style={{ width: "100px" }}
-                        value={viewPassword}
-                        onChange={(e) => setViewPassword(e.target.value)}
+                        value={viewPasswords[record.recordId] || ""}
+                        onChange={(e) => setViewPasswords((prev) => ({ ...prev, [record.recordId]: e.target.value }))}
                       />
                       <Button
                         variant="secondary"
                         size="sm"
-                        onClick={() => openEncryptedDocument(record.documentCid, record.mimeType, record.fileName, record.secret, viewPassword)}
+                        onClick={() => openEncryptedDocument(record.documentCid, record.mimeType, record.fileName, record.secret, viewPasswords[record.recordId] || "")}
                         disabled={!record.verified || !record.documentCid || !record.secret}
                       >
                         View
