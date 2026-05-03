@@ -1,0 +1,16 @@
+{
+  "version": "v2",
+  "optimizer": "enabled (runs=200)",
+  "timestamp": "2026-05-03T21:32:37.530Z",
+  "network": "hardhat",
+  "results": {
+    "registerIdentity_Doctor": 74501,
+    "registerIdentity_Patient": 74489,
+    "grantConsent": 59602,
+    "createRecord": 141199,
+    "updateRecord": 130000,
+    "revokeRecord": 36330,
+    "revokeConsent": 40456,
+    "hasValidConsent": "view (no gas)"
+  }
+}
