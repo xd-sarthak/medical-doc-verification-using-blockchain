@@ -7,6 +7,8 @@
     "compile": "node ./node_modules/hardhat/internal/cli/bootstrap.js compile",
     "compile:local": "node scripts/manual-compile.js",
     "deploy": "node ./node_modules/hardhat/internal/cli/bootstrap.js run scripts/deploy.js --network localhost",
+    "deploy:v2": "node ./node_modules/hardhat/internal/cli/bootstrap.js run scripts/deploy-v2.js --network localhost",
+    "deploy:v2:hardhat": "node ./node_modules/hardhat/internal/cli/bootstrap.js run scripts/deploy-v2.js --network hardhat",
     "benchmark:baseline": "node ./node_modules/hardhat/internal/cli/bootstrap.js run scripts/baseline-gas.js --network hardhat",
     "benchmark:optimized": "node ./node_modules/hardhat/internal/cli/bootstrap.js run scripts/optimized-gas.js --network hardhat",
     "benchmark:optimized:local": "node ./node_modules/hardhat/internal/cli/bootstrap.js run --no-compile scripts/optimized-gas.js --network hardhat",
