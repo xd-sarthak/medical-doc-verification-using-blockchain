@@ -1,4 +1,5 @@
 const hre = require("hardhat");
+const { upgrades } = hre;
 const fs = require("fs");
 const path = require("path");
 
@@ -27,17 +28,22 @@ async function deployContracts() {
   const [admin, ...signers] = await hre.ethers.getSigners();
 
   const IdentityRegistry = await hre.ethers.getContractFactory("IdentityRegistry");
-  const identityRegistry = await IdentityRegistry.deploy();
+  const identityRegistry = await upgrades.deployProxy(IdentityRegistry, [], { kind: "uups" });
   await identityRegistry.waitForDeployment();
 
   const ConsentLedger = await hre.ethers.getContractFactory("ConsentLedger");
-  const consentLedger = await ConsentLedger.deploy(await identityRegistry.getAddress());
+  const consentLedger = await upgrades.deployProxy(
+    ConsentLedger,
+    [await identityRegistry.getAddress()],
+    { kind: "uups" }
+  );
   await consentLedger.waitForDeployment();
 
   const RecordRegistry = await hre.ethers.getContractFactory("RecordRegistry");
-  const recordRegistry = await RecordRegistry.deploy(
-    await identityRegistry.getAddress(),
-    await consentLedger.getAddress()
+  const recordRegistry = await upgrades.deployProxy(
+    RecordRegistry,
+    [await identityRegistry.getAddress(), await consentLedger.getAddress()],
+    { kind: "uups" }
   );
   await recordRegistry.waitForDeployment();
 

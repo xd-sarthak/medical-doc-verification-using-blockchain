@@ -1,5 +1,5 @@
 # Dependencies
-node_modules
+node_modules/
 .pnp/
 .pnp.js
 
@@ -13,6 +13,7 @@ build/
 .DS_Store
 Thumbs.db
 .codex/
+.gemini/
 
 # Environment Variables
 .env
@@ -27,18 +28,27 @@ yarn-debug.log*
 yarn-error.log*
 
 # Hardhat build artifacts
-cache/
-artifacts/
-typechain-types/
+blockchain/cache/
+blockchain/artifacts/
+blockchain/typechain-types/
+blockchain/deployments/
 
 # Benchmark temporary files
-data/benchmark-checkpoint.json
-compile_err*.txt
-compile_output.txt
-mochawesome-report/
+blockchain/data/benchmark-checkpoint.json
+blockchain/compile_err*.txt
+blockchain/compile_output.txt
+blockchain/mochawesome-report/
 
-# Ignored as per request (remove all local files, unnecessary files including .md)
+# Web App build
+Web\ App/build/
+
+# Ignore all markdown files EXCEPT README.md
 *.md
-*.html
+!README.md
+!README.MD
+!readme.md
+
+# Ignore all PDFs, local images, and random local text files
 *.pdf
-imgs/
+*.log
+*.sqlite

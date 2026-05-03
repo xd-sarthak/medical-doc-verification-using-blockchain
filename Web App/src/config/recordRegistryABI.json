@@ -1,0 +1,433 @@
+[
+  {
+    "type": "constructor",
+    "stateMutability": "undefined",
+    "payable": false,
+    "inputs": [
+      {
+        "type": "address",
+        "name": "registryAddress"
+      },
+      {
+        "type": "address",
+        "name": "consentLedgerAddress"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "ConsentRequired",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidConsentLedger",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidDoctor",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidDocumentHash",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidMetadataHash",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidPatient",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidRecord",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidRegistry",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotOwner",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "RecordAuthorMismatch",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "RecordNotActive",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "Unauthorized",
+    "inputs": []
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "RecordCreated",
+    "inputs": [
+      {
+        "type": "uint64",
+        "name": "recordId",
+        "indexed": true
+      },
+      {
+        "type": "uint64",
+        "name": "rootId",
+        "indexed": true
+      },
+      {
+        "type": "address",
+        "name": "patient",
+        "indexed": true
+      },
+      {
+        "type": "address",
+        "name": "doctor",
+        "indexed": false
+      },
+      {
+        "type": "bytes32",
+        "name": "documentHash",
+        "indexed": false
+      },
+      {
+        "type": "bytes32",
+        "name": "metadataHash",
+        "indexed": false
+      },
+      {
+        "type": "uint40",
+        "name": "createdAt",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "RecordRevoked",
+    "inputs": [
+      {
+        "type": "uint64",
+        "name": "recordId",
+        "indexed": true
+      },
+      {
+        "type": "uint64",
+        "name": "rootId",
+        "indexed": true
+      },
+      {
+        "type": "address",
+        "name": "patient",
+        "indexed": true
+      },
+      {
+        "type": "address",
+        "name": "actor",
+        "indexed": false
+      },
+      {
+        "type": "bytes32",
+        "name": "revocationCode",
+        "indexed": false
+      },
+      {
+        "type": "uint40",
+        "name": "revokedAt",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "RecordVersioned",
+    "inputs": [
+      {
+        "type": "uint64",
+        "name": "oldRecordId",
+        "indexed": true
+      },
+      {
+        "type": "uint64",
+        "name": "newRecordId",
+        "indexed": true
+      },
+      {
+        "type": "uint64",
+        "name": "rootId",
+        "indexed": true
+      },
+      {
+        "type": "address",
+        "name": "doctor",
+        "indexed": false
+      },
+      {
+        "type": "bytes32",
+        "name": "newDocumentHash",
+        "indexed": false
+      },
+      {
+        "type": "bytes32",
+        "name": "newMetadataHash",
+        "indexed": false
+      },
+      {
+        "type": "uint40",
+        "name": "updatedAt",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "activeRecordByRootId",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [
+      {
+        "type": "uint64",
+        "name": ""
+      }
+    ],
+    "outputs": [
+      {
+        "type": "uint64",
+        "name": ""
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "consentLedger",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "address",
+        "name": ""
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "createRecord",
+    "constant": false,
+    "payable": false,
+    "inputs": [
+      {
+        "type": "address",
+        "name": "patient"
+      },
+      {
+        "type": "bytes32",
+        "name": "documentHash"
+      },
+      {
+        "type": "bytes32",
+        "name": "metadataHash"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "uint64",
+        "name": "recordId"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "getActiveRecordId",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [
+      {
+        "type": "uint64",
+        "name": "rootId"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "uint64",
+        "name": ""
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "getRecord",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [
+      {
+        "type": "uint64",
+        "name": "recordId"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "tuple",
+        "name": "record",
+        "components": [
+          {
+            "type": "bytes32",
+            "name": "documentHash"
+          },
+          {
+            "type": "bytes32",
+            "name": "metadataHash"
+          },
+          {
+            "type": "address",
+            "name": "patient"
+          },
+          {
+            "type": "address",
+            "name": "doctor"
+          },
+          {
+            "type": "uint64",
+            "name": "parentId"
+          },
+          {
+            "type": "uint64",
+            "name": "rootId"
+          },
+          {
+            "type": "uint64",
+            "name": "recordId"
+          },
+          {
+            "type": "uint8",
+            "name": "status"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "identityRegistry",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "address",
+        "name": ""
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "isActiveRecord",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [
+      {
+        "type": "uint64",
+        "name": "recordId"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "bool",
+        "name": ""
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "nextRecordId",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "uint64",
+        "name": ""
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "owner",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "address",
+        "name": ""
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "revokeRecord",
+    "constant": false,
+    "payable": false,
+    "inputs": [
+      {
+        "type": "uint64",
+        "name": "recordId"
+      },
+      {
+        "type": "bytes32",
+        "name": "revocationCode"
+      }
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "updateRecord",
+    "constant": false,
+    "payable": false,
+    "inputs": [
+      {
+        "type": "uint64",
+        "name": "oldRecordId"
+      },
+      {
+        "type": "bytes32",
+        "name": "newDocumentHash"
+      },
+      {
+        "type": "bytes32",
+        "name": "newMetadataHash"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "uint64",
+        "name": "newRecordId"
+      }
+    ]
+  }
+]

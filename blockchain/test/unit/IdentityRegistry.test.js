@@ -1,5 +1,5 @@
 const { expect } = require("chai");
-const { ethers } = require("hardhat");
+const { ethers, upgrades } = require("hardhat");
 
 describe("IdentityRegistry", function () {
     let registry;
@@ -8,7 +8,8 @@ describe("IdentityRegistry", function () {
     beforeEach(async function () {
         [admin, doctor, patient, stranger] = await ethers.getSigners();
         const IdentityRegistry = await ethers.getContractFactory("IdentityRegistry");
-        registry = await IdentityRegistry.deploy();
+        registry = await upgrades.deployProxy(IdentityRegistry, [], { kind: "uups" });
+        await registry.waitForDeployment();
     });
 
     it("registers the deployer as admin", async function () {
@@ -28,7 +29,7 @@ describe("IdentityRegistry", function () {
     it("blocks non-admin registration", async function () {
         await expect(
             registry.connect(stranger).registerIdentity(doctor.address, 2)
-        ).to.be.revertedWithCustomError(registry, "NotAdmin");
+        ).to.be.revertedWithCustomError(registry, "OwnableUnauthorizedAccount");
     });
 
     it("can deactivate an existing identity", async function () {

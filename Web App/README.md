@@ -36,8 +36,17 @@
    npm install
    ```
 
-3. Start the development server:
+3. Deploy the blockchain contracts first from the repository root:
    ```bash
+   cd ../blockchain
+   npm install
+   npm run deploy
+   ```
+   This writes the latest proxy addresses to `Web App/src/config/contracts.json`.
+
+4. Start the development server:
+   ```bash
+   cd ../Web\ App
    npm start
    ```
    The app will be available at `http://localhost:3000/`.

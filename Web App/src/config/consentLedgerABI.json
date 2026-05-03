@@ -1,0 +1,318 @@
+[
+  {
+    "type": "constructor",
+    "stateMutability": "undefined",
+    "payable": false,
+    "inputs": [
+      {
+        "type": "address",
+        "name": "registryAddress"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "ActiveConsentExists",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "ConsentNotRevocable",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "EmptyBatch",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidDoctor",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidExpiry",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidPatient",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidScope",
+    "inputs": []
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "ConsentGranted",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "patient",
+        "indexed": true
+      },
+      {
+        "type": "address",
+        "name": "doctor",
+        "indexed": true
+      },
+      {
+        "type": "uint8",
+        "name": "scope",
+        "indexed": false
+      },
+      {
+        "type": "uint32",
+        "name": "nonce",
+        "indexed": false
+      },
+      {
+        "type": "uint64",
+        "name": "issuedAt",
+        "indexed": false
+      },
+      {
+        "type": "uint64",
+        "name": "expiresAt",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "ConsentRevoked",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "patient",
+        "indexed": true
+      },
+      {
+        "type": "address",
+        "name": "doctor",
+        "indexed": true
+      },
+      {
+        "type": "uint32",
+        "name": "nonce",
+        "indexed": false
+      },
+      {
+        "type": "bytes32",
+        "name": "revocationCode",
+        "indexed": false
+      },
+      {
+        "type": "uint64",
+        "name": "revokedAt",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "SCOPE_FULL",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "uint8",
+        "name": ""
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "SCOPE_UPLOAD",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "uint8",
+        "name": ""
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "SCOPE_VIEW",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "uint8",
+        "name": ""
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "getActiveConsent",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [
+      {
+        "type": "address",
+        "name": "patient"
+      },
+      {
+        "type": "address",
+        "name": "doctor"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "tuple",
+        "name": "consent",
+        "components": [
+          {
+            "type": "uint64",
+            "name": "expiresAt"
+          },
+          {
+            "type": "uint32",
+            "name": "nonce"
+          },
+          {
+            "type": "uint8",
+            "name": "scope"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "grantConsent",
+    "constant": false,
+    "payable": false,
+    "inputs": [
+      {
+        "type": "address",
+        "name": "doctor"
+      },
+      {
+        "type": "uint8",
+        "name": "scope"
+      },
+      {
+        "type": "uint64",
+        "name": "expiresAt"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "uint32",
+        "name": "nonce"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "grantConsentBatch",
+    "constant": false,
+    "payable": false,
+    "inputs": [
+      {
+        "type": "address[]",
+        "name": "doctors"
+      },
+      {
+        "type": "uint8",
+        "name": "scope"
+      },
+      {
+        "type": "uint64",
+        "name": "expiresAt"
+      }
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "hasValidConsent",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [
+      {
+        "type": "address",
+        "name": "patient"
+      },
+      {
+        "type": "address",
+        "name": "doctor"
+      },
+      {
+        "type": "uint8",
+        "name": "requiredScope"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "bool",
+        "name": ""
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "identityRegistry",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "address",
+        "name": ""
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "revokeConsent",
+    "constant": false,
+    "payable": false,
+    "inputs": [
+      {
+        "type": "address",
+        "name": "doctor"
+      },
+      {
+        "type": "bytes32",
+        "name": "revocationCode"
+      }
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "revokeConsentBatch",
+    "constant": false,
+    "payable": false,
+    "inputs": [
+      {
+        "type": "address[]",
+        "name": "doctors"
+      },
+      {
+        "type": "bytes32",
+        "name": "revocationCode"
+      }
+    ],
+    "outputs": []
+  }
+]

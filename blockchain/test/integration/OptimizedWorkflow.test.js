@@ -1,5 +1,5 @@
 const { expect } = require("chai");
-const { ethers } = require("hardhat");
+const { ethers, upgrades } = require("hardhat");
 
 describe("Optimized Workflow", function () {
     let registry, consentLedger, recordRegistry;
@@ -27,19 +27,27 @@ describe("Optimized Workflow", function () {
         [admin, doctor, patient, stranger] = await ethers.getSigners();
 
         const IdentityRegistry = await ethers.getContractFactory("IdentityRegistry");
-        registry = await IdentityRegistry.deploy();
+        registry = await upgrades.deployProxy(IdentityRegistry, [], { kind: "uups" });
+        await registry.waitForDeployment();
 
         await registry.registerIdentity(doctor.address, 2);
         await registry.registerIdentity(patient.address, 3);
 
         const ConsentLedger = await ethers.getContractFactory("ConsentLedger");
-        consentLedger = await ConsentLedger.deploy(await registry.getAddress());
+        consentLedger = await upgrades.deployProxy(
+            ConsentLedger,
+            [await registry.getAddress()],
+            { kind: "uups" }
+        );
+        await consentLedger.waitForDeployment();
 
         const RecordRegistry = await ethers.getContractFactory("RecordRegistry");
-        recordRegistry = await RecordRegistry.deploy(
-            await registry.getAddress(),
-            await consentLedger.getAddress()
+        recordRegistry = await upgrades.deployProxy(
+            RecordRegistry,
+            [await registry.getAddress(), await consentLedger.getAddress()],
+            { kind: "uups" }
         );
+        await recordRegistry.waitForDeployment();
     });
 
     it("requires patient consent before doctor record creation", async function () {
@@ -135,7 +143,7 @@ describe("Optimized Workflow", function () {
     });
 
     it("prevents a different doctor from superseding another doctor's record", async function () {
-        const [, doctorTwo] = await ethers.getSigners();
+        const [, , , , doctorTwo] = await ethers.getSigners();
         await registry.registerIdentity(doctorTwo.address, 2);
 
         const latestBlock = await ethers.provider.getBlock("latest");

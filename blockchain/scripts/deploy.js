@@ -1,4 +1,29 @@
-const { ethers, upgrades } = require("hardhat");
+const { ethers, upgrades, network } = require("hardhat");
+const fs = require("fs");
+const path = require("path");
+
+function writeDeploymentArtifacts(addresses) {
+  const blockchainOutputDir = path.join(__dirname, "..", "deployments");
+  const frontendOutputDir = path.join(__dirname, "..", "..", "Web App", "src", "config");
+
+  fs.mkdirSync(blockchainOutputDir, { recursive: true });
+  fs.mkdirSync(frontendOutputDir, { recursive: true });
+
+  const payload = {
+    network: network.name,
+    updatedAt: new Date().toISOString(),
+    ...addresses,
+  };
+
+  fs.writeFileSync(
+    path.join(blockchainOutputDir, `${network.name}.json`),
+    JSON.stringify(payload, null, 2)
+  );
+  fs.writeFileSync(
+    path.join(frontendOutputDir, "contracts.json"),
+    JSON.stringify(payload, null, 2)
+  );
+}
 
 async function main() {
   const IdentityRegistry = await ethers.getContractFactory("IdentityRegistry");
@@ -22,6 +47,13 @@ async function main() {
   await recordRegistry.waitForDeployment();
   const recordRegistryAddress = await recordRegistry.getAddress();
   console.log("RecordRegistry proxy deployed to:", recordRegistryAddress);
+
+  writeDeploymentArtifacts({
+    identityRegistry: identityRegistryAddress,
+    consentLedger: consentLedgerAddress,
+    recordRegistry: recordRegistryAddress,
+  });
+  console.log(`Deployment artifacts written for network: ${network.name}`);
 }
 
 main().catch((error) => {
