@@ -34,8 +34,8 @@ const WALLETS_FILE = path.join(OUTPUT_DIR, "wallets.json");
 
 // Default wallet counts per role
 const DEFAULT_COUNTS = {
-  doctors: 1000,
-  patients: 1000,
+  doctors: 2500,
+  patients: 2500,
 };
 
 // ============================================================================
