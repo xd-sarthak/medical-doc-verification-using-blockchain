@@ -90,7 +90,7 @@ jobs:
       # ── 7. Generate & Fund Wallets ────────────────────────────────
       - name: "💰 Generate and fund 5000 wallets"
         working-directory: blockchain
-        run: npx hardhat run perf/wallet-generator.js --network localhost -- --count 5000
+        run: npx hardhat run perf/wallet-generator.js --network localhost
 
       # ── 8. Run Benchmark Engine ───────────────────────────────────
       - name: "📊 Run scalability benchmark (up to ${{ github.event.inputs.max_users || '1000' }} users)"
