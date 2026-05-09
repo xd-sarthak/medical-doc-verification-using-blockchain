@@ -1,0 +1,193 @@
+# ============================================================================
+# Performance Engineering Infrastructure — Docker Compose
+# ============================================================================
+#
+# Brings up the full local observability + blockchain stack:
+#   - Hardhat Node:    Local Ethereum node with 1000 pre-funded accounts
+#   - IPFS (Kubo):     Decentralized file storage for medical documents
+#   - Prometheus:      Metrics collection from all containers
+#   - Grafana:         Dashboard visualization (port 3000)
+#   - cAdvisor:        Docker container resource metrics
+#   - Node Exporter:   Host-level system metrics (CPU, memory, disk, network)
+#
+# Usage:
+#   docker compose -f docker-compose.perf.yml up -d
+#   docker compose -f docker-compose.perf.yml down -v
+#
+# ============================================================================
+
+services:
+  # ──────────────────────────────────────────────────────────────────────────
+  # Hardhat Node — Local Ethereum-compatible blockchain
+  # ──────────────────────────────────────────────────────────────────────────
+  # Why: Provides a deterministic, fast-mining local blockchain for
+  # benchmarking without real gas costs or network latency. Auto-mines
+  # each transaction instantly, allowing us to isolate contract execution
+  # performance from consensus delays.
+  # ──────────────────────────────────────────────────────────────────────────
+  hardhat-node:
+    build:
+      context: ./blockchain
+      dockerfile: perf/docker/hardhat.Dockerfile
+    ports:
+      - "8545:8545"
+    networks:
+      - perf-net
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8545"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # IPFS (Kubo) — Decentralized document storage
+  # ──────────────────────────────────────────────────────────────────────────
+  # Why: Medical documents are stored on IPFS with only the content hash
+  # recorded on-chain. This is the primary I/O bottleneck in the system —
+  # upload latency scales with file size and is the dominant factor in
+  # end-to-end transaction time for document operations.
+  # ──────────────────────────────────────────────────────────────────────────
+  ipfs:
+    image: ipfs/kubo:latest
+    ports:
+      - "5001:5001"   # API endpoint (uploads, retrieval)
+      - "8080:8080"   # Gateway (HTTP retrieval)
+    networks:
+      - perf-net
+    environment:
+      - IPFS_PROFILE=server
+    volumes:
+      - ipfs-data:/data/ipfs
+    healthcheck:
+      test: ["CMD-SHELL", "ipfs id || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Pushgateway — Receive metrics from short-lived scripts
+  # ──────────────────────────────────────────────────────────────────────────
+  pushgateway:
+    image: prom/pushgateway:latest
+    ports:
+      - "9091:9091"
+    networks:
+      - perf-net
+    restart: unless-stopped
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Prometheus — Metrics collection and time-series database
+  # ──────────────────────────────────────────────────────────────────────────
+  # Why: Collects CPU, memory, network, and disk metrics from ALL containers
+  # via cAdvisor, plus host-level metrics via Node Exporter. This lets us
+  # correlate blockchain/IPFS performance with system resource consumption
+  # to identify bottlenecks (e.g., IPFS CPU saturation at 100 concurrent uploads).
+  # ──────────────────────────────────────────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    networks:
+      - perf-net
+    volumes:
+      - ./blockchain/perf/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=7d'
+      - '--web.enable-lifecycle'
+    depends_on:
+      cadvisor:
+        condition: service_started
+      node-exporter:
+        condition: service_started
+    restart: unless-stopped
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Grafana — Dashboard visualization
+  # ──────────────────────────────────────────────────────────────────────────
+  # Why: Provides real-time, portfolio-grade dashboards showing system
+  # performance during benchmark runs. Pre-configured with provisioned
+  # datasources and dashboards so it works immediately on first boot.
+  # Default credentials: admin/admin (change on first login).
+  # ──────────────────────────────────────────────────────────────────────────
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3030:3000"
+    networks:
+      - perf-net
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/var/lib/grafana/dashboards/medvault-performance.json
+    volumes:
+      - ./blockchain/perf/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./blockchain/perf/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # cAdvisor — Container resource metrics
+  # ──────────────────────────────────────────────────────────────────────────
+  # Why: Exposes per-container CPU, memory, network I/O, and disk I/O
+  # metrics to Prometheus. This is how we measure whether the IPFS container
+  # or Hardhat node is the bottleneck under load. Without cAdvisor, we'd
+  # only have aggregate host metrics with no per-service granularity.
+  # ──────────────────────────────────────────────────────────────────────────
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    ports:
+      - "8081:8080"
+    networks:
+      - perf-net
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    devices:
+      - /dev/kmsg
+    restart: unless-stopped
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Node Exporter — Host-level system metrics
+  # ──────────────────────────────────────────────────────────────────────────
+  # Why: Provides CPU, memory, disk, and network metrics for the HOST machine.
+  # Combined with cAdvisor's container metrics, this gives us a complete
+  # picture: is the host itself saturated, or is one specific container the
+  # bottleneck? Essential for identifying whether scaling limits are
+  # hardware-bound or software-bound.
+  # ──────────────────────────────────────────────────────────────────────────
+  node-exporter:
+    image: prom/node-exporter:latest
+    ports:
+      - "9100:9100"
+    networks:
+      - perf-net
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    restart: unless-stopped
+
+networks:
+  perf-net:
+    driver: bridge
+
+volumes:
+  ipfs-data:
+  prometheus-data:
+  grafana-data:

@@ -1,0 +1,19 @@
+# Grafana Dashboard Provisioning — Auto-load MedVault dashboard
+# Loads pre-built dashboards from the /var/lib/grafana/dashboards directory
+# on first boot. Dashboards are read-only (provisioned) but can be copied
+# and customized via the Grafana UI.
+
+apiVersion: 1
+
+providers:
+  - name: 'MedVault Performance'
+    orgId: 1
+    folder: 'MedVault'
+    type: file
+    disableDeletion: false
+    editable: true
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: false

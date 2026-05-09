@@ -1,0 +1,150 @@
+# ============================================================================
+# GitHub Actions — MedVault V2 Performance Benchmark (Cloud)
+# ============================================================================
+#
+# Runs the full scalability benchmark on GitHub's servers (~7GB RAM, 4 vCPU)
+# instead of your local machine. This eliminates your laptop as a bottleneck
+# and gives you a consistent, reproducible baseline.
+#
+# Triggers:
+#   - Manual dispatch (click "Run workflow" on GitHub)
+#   - Push to main branch (optional, disabled by default)
+#
+# Outputs:
+#   - Performance report (Markdown)
+#   - TPS & Latency charts (PNG)
+#   - Raw benchmark data (JSON/CSV)
+#   - All uploaded as downloadable GitHub Artifacts
+# ============================================================================
+
+name: "⚡ Performance Benchmark"
+
+on:
+  # Manual trigger — run whenever you want from the Actions tab
+  workflow_dispatch:
+    inputs:
+      max_users:
+        description: 'Maximum concurrent users to test'
+        required: false
+        default: '1000'
+        type: choice
+        options:
+          - '100'
+          - '500'
+          - '1000'
+
+  # Uncomment the lines below to auto-run on every push to main:
+  # push:
+  #   branches: [main]
+  #   paths:
+  #     - 'blockchain/contracts/**'
+  #     - 'blockchain/perf/**'
+
+jobs:
+  benchmark:
+    name: "Run Scalability Benchmark"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # ── 1. Checkout Code ──────────────────────────────────────────
+      - name: "📥 Checkout repository"
+        uses: actions/checkout@v4
+
+      # ── 2. Setup Node.js ──────────────────────────────────────────
+      - name: "📦 Setup Node.js 20"
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: blockchain/package-lock.json
+
+      # ── 3. Install Dependencies ───────────────────────────────────
+      - name: "📦 Install dependencies"
+        working-directory: blockchain
+        run: npm ci
+
+      # ── 4. Compile Contracts ──────────────────────────────────────
+      - name: "🔨 Compile Solidity contracts"
+        working-directory: blockchain
+        run: npx hardhat compile
+
+      # ── 5. Start Hardhat Node ─────────────────────────────────────
+      - name: "🚀 Start Hardhat node (background)"
+        working-directory: blockchain
+        run: |
+          npx hardhat node &
+          sleep 5
+          echo "Hardhat node started on port 8545"
+
+      # ── 6. Create Output Directories ──────────────────────────────
+      - name: "📁 Create output directories"
+        working-directory: blockchain
+        run: |
+          mkdir -p perf-data/raw
+          mkdir -p perf-reports
+          mkdir -p perf-charts
+
+      # ── 7. Generate & Fund Wallets ────────────────────────────────
+      - name: "💰 Generate and fund 2000 wallets"
+        working-directory: blockchain
+        run: npx hardhat run perf/wallet-generator.js --network localhost
+
+      # ── 8. Run Benchmark Engine ───────────────────────────────────
+      - name: "📊 Run scalability benchmark (up to ${{ github.event.inputs.max_users || '1000' }} users)"
+        working-directory: blockchain
+        run: npx hardhat run perf/benchmark-engine.js --network localhost
+
+      # ── 9. Run Stress Test ────────────────────────────────────────
+      - name: "🔥 Run stress/saturation test"
+        working-directory: blockchain
+        run: npx hardhat run perf/stress-tester.js --network localhost
+
+      # ── 10. Run Cost Comparator ───────────────────────────────────
+      - name: "💵 Calculate L1/L2 cost comparison"
+        working-directory: blockchain
+        run: node perf/cost-comparator.js
+
+      # ── 11. Generate Charts ───────────────────────────────────────
+      - name: "📈 Generate performance charts"
+        working-directory: blockchain
+        run: node perf/chart-generator.js
+
+      # ── 12. Generate Report ───────────────────────────────────────
+      - name: "📝 Generate Markdown report"
+        working-directory: blockchain
+        run: node perf/report-generator.js
+
+      # ── 13. Print Report Summary ──────────────────────────────────
+      - name: "📋 Print report to logs"
+        working-directory: blockchain
+        run: |
+          echo "============================================="
+          echo "   PERFORMANCE REPORT SUMMARY"
+          echo "============================================="
+          REPORT=$(ls -t perf-reports/*.md | head -1)
+          cat "$REPORT"
+
+      # ── 14. Upload Results as Artifacts ───────────────────────────
+      - name: "📦 Upload benchmark results"
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-results-${{ github.run_number }}
+          path: |
+            blockchain/perf-reports/
+            blockchain/perf-charts/
+            blockchain/perf-data/raw/
+            blockchain/perf-data/latest-benchmark.json
+          retention-days: 30
+
+      # ── 15. Post Summary to GitHub ────────────────────────────────
+      - name: "📊 Post results to Job Summary"
+        working-directory: blockchain
+        run: |
+          REPORT=$(ls -t perf-reports/*.md | head -1)
+          echo "## ⚡ MedVault V2 Performance Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Run:** #${{ github.run_number }} | **Runner:** \`ubuntu-latest\` (7GB RAM, 4 vCPU)" >> $GITHUB_STEP_SUMMARY
+          echo "**Triggered by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cat "$REPORT" >> $GITHUB_STEP_SUMMARY

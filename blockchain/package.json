@@ -22,7 +22,16 @@
     "test": "node ./node_modules/hardhat/internal/cli/bootstrap.js test",
     "test:local": "node ./node_modules/hardhat/internal/cli/bootstrap.js test --no-compile",
     "test:report": "node ./node_modules/hardhat/internal/cli/bootstrap.js test && node scripts/generate-test-report.js",
-    "test:coverage": "node ./node_modules/hardhat/internal/cli/bootstrap.js coverage"
+    "test:coverage": "node ./node_modules/hardhat/internal/cli/bootstrap.js coverage",
+    "perf:setup": "bash perf/scripts/setup.sh",
+    "perf:test": "npx hardhat run perf/benchmark-engine.js --network localhost",
+    "perf:stress": "npx hardhat run perf/stress-tester.js --network localhost",
+    "perf:cost": "node perf/cost-comparator.js",
+    "perf:charts": "node perf/chart-generator.js",
+    "perf:report": "node perf/report-generator.js",
+    "perf:full": "bash perf/scripts/run-full-benchmark.sh",
+    "perf:infra:up": "docker compose -f ../docker-compose.perf.yml up -d",
+    "perf:infra:down": "docker compose -f ../docker-compose.perf.yml down"
   },
   "keywords": [],
   "author": "",
@@ -56,6 +65,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts-upgradeable": "^5.6.1",
-    "@openzeppelin/hardhat-upgrades": "^3.9.1"
+    "@openzeppelin/hardhat-upgrades": "^3.9.1",
+    "prom-client": "^15.1.3"
   }
 }

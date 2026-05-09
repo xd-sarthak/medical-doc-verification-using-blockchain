@@ -1,0 +1,64 @@
+# ============================================================================
+# Prometheus Configuration — Performance Benchmarking
+# ============================================================================
+#
+# Scrape targets:
+#   1. cAdvisor (port 8080)  — Per-container CPU, memory, network, disk I/O
+#   2. Node Exporter (9100)  — Host-level system metrics
+#   3. Prometheus itself     — Internal metrics for monitoring health
+#
+# Scrape interval: 5s for high-resolution during benchmark runs.
+# In production you'd use 15-30s, but for short benchmark windows (2-10 min)
+# we need fine-grained resolution to capture transient spikes and saturation.
+# ============================================================================
+
+global:
+  scrape_interval: 5s        # High resolution for short benchmark windows
+  evaluation_interval: 5s
+  scrape_timeout: 5s
+
+# ── Scrape Targets ──────────────────────────────────────────────────────────
+
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          component: 'monitoring'
+
+  # cAdvisor — Docker container resource metrics
+  # Why: This is how we measure IPFS vs Hardhat resource consumption.
+  # cAdvisor exposes metrics like:
+  #   container_cpu_usage_seconds_total
+  #   container_memory_usage_bytes
+  #   container_network_receive_bytes_total
+  #   container_network_transmit_bytes_total
+  #   container_fs_reads_bytes_total
+  #   container_fs_writes_bytes_total
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+        labels:
+          component: 'containers'
+
+  # Node Exporter — Host system metrics
+  # Why: Tells us if the HOST machine is the bottleneck (CPU/memory/disk
+  # saturated) vs a specific container. Key metrics:
+  #   node_cpu_seconds_total
+  #   node_memory_MemAvailable_bytes
+  #   node_network_receive_bytes_total
+  #   node_disk_io_time_seconds_total
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          component: 'host'
+
+  # Pushgateway — Application metrics pushed from short-lived benchmark script
+  - job_name: 'pushgateway'
+    honor_labels: true
+    static_configs:
+      - targets: ['pushgateway:9091']
+        labels:
+          component: 'benchmark'

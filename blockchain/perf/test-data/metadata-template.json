@@ -1,0 +1,8 @@
+{
+  "patientId": "PT-847294",
+  "documentType": "BloodTest_CompletePanel",
+  "date": "2026-05-09T11:04:10.869Z",
+  "department": "Hematology",
+  "summary": "Routine complete blood count. All values within normal ranges.",
+  "checksum": "da9f5104016fc54cabb1871f335192a434e69532999112a41b8a9eb2d4a47d8d"
+}

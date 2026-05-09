@@ -1,0 +1,16 @@
+# Grafana Datasource Provisioning — Auto-configure Prometheus
+# This file auto-registers Prometheus as the default datasource on first boot.
+# No manual configuration needed — Grafana connects to Prometheus immediately.
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true
+    jsonData:
+      timeInterval: '5s'
+      httpMethod: POST

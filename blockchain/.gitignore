@@ -13,6 +13,14 @@ compile_output.txt
 
 # Test reports
 mochawesome-report/
+data/
+deployments/
+
+# Perf benchmark output
+perf-data/
+perf-reports/
+perf-charts/
+perf/test-data/*.pdf
 coverage/
 
 # Environment
