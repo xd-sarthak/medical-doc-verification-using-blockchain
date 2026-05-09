@@ -69,7 +69,10 @@ async function pushMetricsToPrometheus(operation, users, stats) {
   try {
     await pushGateway.push({ jobName: "benchmark" });
   } catch (err) {
-    console.error("    ⚠️ Failed to push metrics to Pushgateway:", err.message);
+    // Silently ignore in CI — Pushgateway only runs locally with Docker
+    if (!process.env.CI && !process.env.GITHUB_ACTIONS) {
+      console.error("    ⚠️ Failed to push metrics to Pushgateway:", err.message);
+    }
   }
 }
 
