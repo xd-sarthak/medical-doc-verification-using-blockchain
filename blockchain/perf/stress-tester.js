@@ -21,7 +21,7 @@ const { runConcurrentOperation } = require("./benchmark-engine");
 
 const CONFIG = {
   startUsers: 5,
-  maxUsers: 2000,            // Push hard — let the system tell us where it breaks
+  maxUsers: 5000,            // Push hard — let the system tell us where it breaks
   stepFactor: 1.5,           // Multiply users by 1.5x each step (5→7→11→16→24→...)
   errorThresholdPercent: 10, // Stop if errors > 10%
   latencyThresholdMs: 30000, // Stop if p95 latency > 30 seconds
