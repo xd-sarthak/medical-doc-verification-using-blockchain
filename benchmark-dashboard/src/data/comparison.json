@@ -1,0 +1,275 @@
+{
+    "metadata": {
+        "description": "Cost and feature comparison between blockchain-based and centralized medical document management systems",
+        "lastUpdated": "2026-02-27",
+        "notes": "Centralized costs are estimated based on AWS pricing (us-east-1). Blockchain costs depend on gas prices and network conditions."
+    },
+    "platforms": {
+        "ethereum_mainnet": {
+            "name": "Ethereum Mainnet",
+            "type": "public_blockchain",
+            "consensusMechanism": "Proof of Stake",
+            "avgGasPriceGwei": 20,
+            "peakGasPriceGwei": 200,
+            "nativeToken": "ETH",
+            "tokenPriceUsd": 3500,
+            "blockTimeSeconds": 12,
+            "maxTxPerBlock": 100,
+            "theoreticalTps": 15,
+            "finality": "~15 minutes (64 slots)",
+            "estimatedPerOpCost": {
+                "uploadDocument": {
+                    "gasEstimate": 150000,
+                    "usdAt20gwei": 10.50,
+                    "usdAt200gwei": 105.00
+                },
+                "grantAccess": {
+                    "gasEstimate": 70000,
+                    "usdAt20gwei": 4.90,
+                    "usdAt200gwei": 49.00
+                },
+                "revokeAccess": {
+                    "gasEstimate": 50000,
+                    "usdAt20gwei": 3.50,
+                    "usdAt200gwei": 35.00
+                },
+                "auditLog": {
+                    "gasEstimate": 80000,
+                    "usdAt20gwei": 5.60,
+                    "usdAt200gwei": 56.00
+                }
+            },
+            "monthlyInfrastructureCost": 0,
+            "advantages": [
+                "Maximum decentralization and security",
+                "Largest ecosystem and developer community",
+                "Strongest immutability guarantees",
+                "No infrastructure management required"
+            ],
+            "disadvantages": [
+                "High per-transaction costs",
+                "Variable gas prices during congestion",
+                "Slower finality compared to L2/centralized",
+                "Data storage on-chain is expensive"
+            ]
+        },
+        "polygon_l2": {
+            "name": "Polygon PoS (Layer 2)",
+            "type": "layer2_blockchain",
+            "consensusMechanism": "Proof of Stake (sidechain)",
+            "avgGasPriceGwei": 30,
+            "peakGasPriceGwei": 300,
+            "nativeToken": "MATIC",
+            "tokenPriceUsd": 0.90,
+            "blockTimeSeconds": 2,
+            "maxTxPerBlock": 200,
+            "theoreticalTps": 65,
+            "finality": "~2 minutes (Polygon) + ~30 min (checkpoint to L1)",
+            "estimatedPerOpCost": {
+                "uploadDocument": {
+                    "gasEstimate": 150000,
+                    "usdAt30gwei": 0.00405,
+                    "usdAt300gwei": 0.0405
+                },
+                "grantAccess": {
+                    "gasEstimate": 70000,
+                    "usdAt30gwei": 0.00189,
+                    "usdAt300gwei": 0.0189
+                },
+                "revokeAccess": {
+                    "gasEstimate": 50000,
+                    "usdAt30gwei": 0.00135,
+                    "usdAt300gwei": 0.0135
+                },
+                "auditLog": {
+                    "gasEstimate": 80000,
+                    "usdAt30gwei": 0.00216,
+                    "usdAt300gwei": 0.0216
+                }
+            },
+            "monthlyInfrastructureCost": 0,
+            "advantages": [
+                "~99.7% cheaper than Ethereum mainnet",
+                "Faster block times (2s vs 12s)",
+                "EVM-compatible (same smart contracts)",
+                "Periodic checkpoints to Ethereum L1 for security"
+            ],
+            "disadvantages": [
+                "Less decentralized than Ethereum mainnet",
+                "Security depends on checkpoint bridge",
+                "Smaller validator set",
+                "Less battle-tested for healthcare applications"
+            ]
+        },
+        "hyperledger_fabric": {
+            "name": "Hyperledger Fabric",
+            "type": "private_blockchain",
+            "consensusMechanism": "Raft / PBFT (configurable)",
+            "avgGasPriceGwei": 0,
+            "nativeToken": "None",
+            "tokenPriceUsd": 0,
+            "blockTimeSeconds": 1,
+            "theoreticalTps": 3500,
+            "finality": "Immediate (within block)",
+            "estimatedPerOpCost": {
+                "uploadDocument": {
+                    "usd": 0
+                },
+                "grantAccess": {
+                    "usd": 0
+                },
+                "revokeAccess": {
+                    "usd": 0
+                },
+                "auditLog": {
+                    "usd": 0
+                }
+            },
+            "monthlyInfrastructureCost": {
+                "minimalSetup": 200,
+                "productionSetup": 1500,
+                "description": "AWS EC2/EKS instances for ordering nodes, peers, and CAs"
+            },
+            "advantages": [
+                "Zero per-transaction gas costs",
+                "Very high throughput (3500+ TPS)",
+                "Private channels for data segregation",
+                "Fine-grained access control built-in"
+            ],
+            "disadvantages": [
+                "Requires infrastructure management",
+                "Not publicly auditable",
+                "Permissioned — need to trust consortium members",
+                "Smaller developer ecosystem"
+            ]
+        },
+        "centralized_aws": {
+            "name": "Centralized (AWS RDS + S3)",
+            "type": "centralized_cloud",
+            "provider": "Amazon Web Services",
+            "estimatedPerOpCost": {
+                "uploadDocument": {
+                    "s3PutRequest": 0.000005,
+                    "rdsWrite": 0.000001,
+                    "totalUsd": 0.000006,
+                    "description": "S3 PUT ($0.005/1000) + RDS write"
+                },
+                "grantAccess": {
+                    "rdsWrite": 0.000001,
+                    "totalUsd": 0.000001,
+                    "description": "Single RDS INSERT"
+                },
+                "revokeAccess": {
+                    "rdsWrite": 0.000001,
+                    "totalUsd": 0.000001,
+                    "description": "Single RDS UPDATE"
+                },
+                "auditLog": {
+                    "rdsWrite": 0.000001,
+                    "totalUsd": 0.000001,
+                    "description": "Single RDS INSERT to audit table"
+                }
+            },
+            "monthlyInfrastructureCost": {
+                "rdsInstance": 150,
+                "s3Storage": 25,
+                "networking": 30,
+                "backup": 20,
+                "monitoring": 15,
+                "total": 240,
+                "description": "RDS db.r5.large + S3 + CloudWatch + backups"
+            },
+            "advantages": [
+                "Lowest per-operation cost",
+                "Highest throughput (thousands of TPS)",
+                "Mature ecosystem with managed services",
+                "Easy horizontal scaling"
+            ],
+            "disadvantages": [
+                "Single point of failure (provider outage)",
+                "Data can be modified by administrators",
+                "No built-in immutability guarantees",
+                "Requires trust in cloud provider",
+                "Audit trail can be tampered with",
+                "Vendor lock-in risk"
+            ]
+        }
+    },
+    "comparisonMatrix": {
+        "categories": [
+            {
+                "name": "Data Immutability",
+                "ethereum": "★★★★★",
+                "polygon": "★★★★☆",
+                "hyperledger": "★★★☆☆",
+                "centralized": "★☆☆☆☆",
+                "description": "Resistance to unauthorized data modification"
+            },
+            {
+                "name": "Audit Trail Integrity",
+                "ethereum": "★★★★★",
+                "polygon": "★★★★☆",
+                "hyperledger": "★★★★☆",
+                "centralized": "★★☆☆☆",
+                "description": "Trustworthiness of access logs"
+            },
+            {
+                "name": "Per-Transaction Cost",
+                "ethereum": "★☆☆☆☆",
+                "polygon": "★★★★☆",
+                "hyperledger": "★★★★★",
+                "centralized": "★★★★★",
+                "description": "Cost per individual operation"
+            },
+            {
+                "name": "Throughput (TPS)",
+                "ethereum": "★★☆☆☆",
+                "polygon": "★★★☆☆",
+                "hyperledger": "★★★★☆",
+                "centralized": "★★★★★",
+                "description": "Transactions per second"
+            },
+            {
+                "name": "Patient Data Sovereignty",
+                "ethereum": "★★★★★",
+                "polygon": "★★★★★",
+                "hyperledger": "★★★☆☆",
+                "centralized": "★★☆☆☆",
+                "description": "Patient control over who accesses their data"
+            },
+            {
+                "name": "HIPAA Compliance Readiness",
+                "ethereum": "★★★★☆",
+                "polygon": "★★★★☆",
+                "hyperledger": "★★★★★",
+                "centralized": "★★★★☆",
+                "description": "Readiness for healthcare regulatory compliance"
+            },
+            {
+                "name": "Operational Complexity",
+                "ethereum": "★★★★★",
+                "polygon": "★★★★☆",
+                "hyperledger": "★★☆☆☆",
+                "centralized": "★★★★☆",
+                "description": "Ease of deployment and maintenance (5 = easiest)"
+            }
+        ]
+    },
+    "breakEvenAnalysis": {
+        "description": "Number of monthly transactions at which blockchain total cost equals centralized total cost",
+        "ethereumVsCentralized": {
+            "ethereumCostPerTx": 5.60,
+            "centralizedMonthlyFixed": 240,
+            "centralizedCostPerTx": 0.000006,
+            "breakEvenTxCount": "43 transactions/month (above this, centralized is cheaper per-tx)",
+            "note": "Blockchain's value proposition is security and immutability, not raw cost efficiency"
+        },
+        "polygonVsCentralized": {
+            "polygonCostPerTx": 0.003,
+            "centralizedMonthlyFixed": 240,
+            "centralizedCostPerTx": 0.000006,
+            "breakEvenTxCount": "~80,000 transactions/month",
+            "note": "At high volumes, Polygon approaches cost parity with centralized systems"
+        }
+    }
+}

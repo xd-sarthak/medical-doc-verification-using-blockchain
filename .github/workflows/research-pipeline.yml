@@ -1,0 +1,107 @@
+# ============================================================================
+# GitHub Actions — MedVault Research Benchmark Pipeline
+# ============================================================================
+#
+# Runs the full research-grade scalability and cost benchmarking pipeline
+# on GitHub's free-tier Ubuntu runners.
+#
+# This workflow provisions the local infrastructure (Hardhat, IPFS, Prometheus)
+# using Docker Compose, executes the load tests, and automatically publishes
+# a publication-quality final report to the GitHub Step Summary.
+#
+# ============================================================================
+
+name: "🚀 Automated Research Pipeline"
+
+on:
+  workflow_dispatch:
+  # push:
+  #   branches: [main]
+
+jobs:
+  run-pipeline:
+    name: "Execute Benchmarks & Generate Report"
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      # ── 1. Checkout Code ──────────────────────────────────────────
+      - name: "📥 Checkout repository"
+        uses: actions/checkout@v4
+
+      # ── 2. Setup Node.js ──────────────────────────────────────────
+      - name: "📦 Setup Node.js 20"
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: blockchain/package-lock.json
+
+      # ── 3. Install Dependencies ───────────────────────────────────
+      - name: "📦 Install dependencies"
+        working-directory: blockchain
+        run: npm ci
+
+      # ── 4. Compile Smart Contracts ────────────────────────────────
+      - name: "🔨 Compile Solidity contracts"
+        working-directory: blockchain
+        run: npx hardhat compile
+
+      # ── 5. Start Infrastructure (Docker Compose) ──────────────────
+      - name: "🐳 Start Local Infrastructure (IPFS, Hardhat, Prometheus)"
+        run: |
+          # Use the existing docker-compose file to spin up everything in detached mode
+          docker compose -f docker-compose.perf.yml up -d ipfs hardhat-node prometheus pushgateway
+          
+          echo "Waiting 15 seconds for services to initialize..."
+          sleep 15
+          
+          # Verify containers are running
+          docker ps
+
+      # ── 6. Generate & Fund Wallets ────────────────────────────────
+      - name: "💰 Generate and fund test wallets"
+        working-directory: blockchain
+        run: node perf/wallet-generator.js
+
+      # ── 7. Run Gas & IPFS Benchmark ───────────────────────────────
+      - name: "⛽ Run Gas Cost and IPFS Latency Benchmarks"
+        working-directory: blockchain
+        run: npx hardhat run scripts/benchmark.js --network localhost
+
+      # ── 8. Run Scalability Benchmark ──────────────────────────────
+      - name: "📈 Run High-Concurrency Scalability Engine"
+        working-directory: blockchain
+        run: node perf/benchmark-engine.js
+
+      # ── 9. Run Research Orchestrator ──────────────────────────────
+      - name: "📊 Synthesize Final Report"
+        working-directory: blockchain
+        run: bash scripts/run-research-pipeline.sh
+
+      # ── 10. Publish to GitHub Job Summary ─────────────────────────
+      - name: "📋 Publish Executive Summary"
+        if: always()
+        working-directory: blockchain
+        run: |
+          if [ -f "data/final-report/executive-summary.md" ]; then
+            cat data/final-report/executive-summary.md >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            cat data/final-report/results.md >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Pipeline failed to generate the executive summary." >> $GITHUB_STEP_SUMMARY
+          fi
+
+      # ── 11. Upload Artifacts ──────────────────────────────────────
+      - name: "📦 Upload Final Report Artifacts"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: research-benchmark-report-${{ github.run_number }}
+          path: blockchain/data/final-report/
+          retention-days: 30
+
+      # ── 12. Teardown Infrastructure ───────────────────────────────
+      - name: "🧹 Teardown Docker Containers"
+        if: always()
+        run: docker compose -f docker-compose.perf.yml down
